@@ -5,9 +5,9 @@ import (
 	u "apiBack/utils"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,20 +20,38 @@ func main() {
 
 	r := gin.Default()
 
+	r.Use(cors.Default())
 	r.SetTrustedProxies(nil)
 
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
-	r.POST("/upload-avatar", func(c *gin.Context) {
-		// Archivo individual
-		file, _ := c.FormFile("file")
-		log.Println(file.Filename)
 
-		file.Filename = "firstNameAvatar"
+	r.POST("/upload", func(c *gin.Context) {
 
-		// Guarda el archivo recibido a un destino específico
-		c.SaveUploadedFile(file, "/media/avatars")
+		file, err := c.FormFile("file")
+		if err != nil {
+			log.Panic(err)
+		}
 
-		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+		// Upload to disk
+		err = c.SaveUploadedFile(file, "./media/avatars/"+file.Filename)
+
+		if err != nil {
+			c.JSON(400, gin.H{
+				"message": "Fail. body is empty",
+			})
+		}
+
+		c.JSON(200, gin.H{
+			"message": file.Filename + "uploaded!",
+		})
+
+		// c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+	})
+
+	r.POST("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": c.ClientIP(),
+		})
 	})
 
 	r.GET("/ping", func(c *gin.Context) {
