@@ -19,9 +19,6 @@ func GetCollection(collection string) *mongo.Collection {
 
 	var MONGO_HOST = os.Getenv("MONGO_HOST")
 	var MONGODB_PORT = os.Getenv("MONGODB_PORT")
-	var MONGO_COLLECTION = os.Getenv("MONGO_COLLECTION")
-	//	var MONGO_USER = os.Getenv("MONGO_USER")
-	//	var MONGO_PASSWORD = os.Getenv("MONGO_PASSWORD")
 	var MONGO_DATABASE = os.Getenv("MONGO_DATABASE")
 
 	var uriMongodb = fmt.Sprintf("mongodb://%s:%s", MONGO_HOST, MONGODB_PORT)
@@ -41,6 +38,6 @@ func GetCollection(collection string) *mongo.Collection {
 
 	log.Println("Conexion with database successed")
 
-	return (client.Database(MONGO_DATABASE).Collection(MONGO_COLLECTION))
+	return (client.Database(MONGO_DATABASE).Collection(collection))
 
 }

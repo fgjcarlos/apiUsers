@@ -2,9 +2,9 @@ package delete
 
 import dbController "apiBack/db"
 
-func DeleteUser(userID string) error {
+func DeleteAvatar(avatarID string) error {
 
-	err := dbController.DeleteUser(userID)
+	err := dbController.DeleteAvatar(avatarID)
 
 	if err != nil {
 		return err

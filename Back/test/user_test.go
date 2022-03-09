@@ -56,7 +56,6 @@ func TestUpdateUser(t *testing.T) {
 	user := u.User{
 		Name:      "Manolo",
 		Email:     "nolo@micorrep.com",
-		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 
