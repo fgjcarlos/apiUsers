@@ -5,7 +5,7 @@ import (
 	u "apiBack/db/models"
 )
 
-func GetUserById(userID string) (u.User, error) {
+func GetUserById(userID int) (u.User, error) {
 
 	user, err := dbController.ReadUserById(userID)
 

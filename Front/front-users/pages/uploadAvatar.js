@@ -6,12 +6,13 @@ import { Toaster } from 'react-hot-toast';
 import Button from "components/Button";
 // HOOKS
 import useUploadSingleAvatar from 'hooks/useUploadSingleFile';
+import toast from 'react-hot-toast';
 
 export default function UploadAvatar() {
 
     const router = useRouter()
 
-    const [_, setFile, handleUpload] = useUploadSingleAvatar()
+    const [file, setFile, handleUpload] = useUploadSingleAvatar()
 
     const formRef = useRef();
 
@@ -24,16 +25,37 @@ export default function UploadAvatar() {
         })
     }
 
+
+    const throwSuccessToast = () => {
+        toast.success('The file has been uploaded successfully.', {
+            duration: 4000,
+        })
+    }
+
+    const throwErrorToast = () => {
+        toast.error('An error has occurred.', {
+            duration: 4000,
+        })
+    }
+
     const onClick = async (e) => {
 
         e.preventDefault()
-        const response = await handleUpload()
 
-        if (response && response.ok) {
-            console.log(await response.json());
+        if (file) {
+
+            const response = await handleUpload()
+
+            response.ok
+                ? throwSuccessToast()
+                : throwErrorToast()
+
+            // *Reset form and state file
             formRef.current.reset()
             setFile(null)
+
         }
+
     }
 
     return (
@@ -42,9 +64,9 @@ export default function UploadAvatar() {
                 ref={formRef}
                 className="bg-white rounded-2xl flex justify-evenly items-center flex-col h-2/3 w-3/5 shadow-2xl"
             >
-                <label 
-                htmlFor="avatar"
-                className='capitalize font-bold text-3xl'
+                <label
+                    htmlFor="avatar"
+                    className='capitalize font-bold text-3xl'
                 >Upload avatar</label>
                 <input
                     className='cursor-pointer block w-4/5 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 truncate'

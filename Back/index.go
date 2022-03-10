@@ -16,7 +16,6 @@ import (
 func main() {
 
 	// Load var env
-	// u.LoadEnv()
 	pathEnvFile := "/home/fgjcarlos/Escritorio/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
 	errDotenv := godotenv.Load(pathEnvFile)
 
@@ -56,6 +55,13 @@ func main() {
 	{
 		avatarGroup.GET("/all", c_get.GetAllAvatars)
 		avatarGroup.GET("/:id", c_get.GetAvatarById)
+	}
+
+	// *Endpoint "USERS"
+	usersGroup := r.Group("/user")
+	{
+		usersGroup.GET("/all", c_get.GetAllUsers)
+		usersGroup.GET("/:id", c_get.GetUserById)
 	}
 
 	r.GET("/", homePage)

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"apiBack/db"
 	"apiBack/db/delete"
 	"apiBack/db/get"
 	"apiBack/db/post"
@@ -9,20 +10,23 @@ import (
 	u "apiBack/db/models"
 	"testing"
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var userID string
+var userID int
 
 func TestCreate(t *testing.T) {
 
-	oid := primitive.NewObjectID()
-	userID = oid.Hex()
+	userid, errID := db.GenerateUserID()
+
+	userID = userid
+
+	if errID != nil {
+		t.Error("Generate ID failed")
+	}
 
 	user := u.User{
-		ID:        oid,
-		Name:      "Juan",
+		ID:        userID,
+		Name:      "Juan da",
 		Email:     "fgjdf@micorrep.com",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),

@@ -15,24 +15,10 @@ export default function useUploadSingleAvatar() {
     formData.append("dir", file.dir);
     formData.append("type", file.type);
 
-    const myPromise = fetch(urlServer, {
+    const myPromise = await fetch(urlServer, {
       method: "POST",
       body: formData,
     });
-
-    await toast.promise(
-      myPromise,
-      {
-        loading: "Saving...",
-        success: <b>Settings saved!</b>,
-        error: <b>Could not save.</b>,
-      },
-      {
-        success: {
-          duration: 5000,
-        },
-      }
-    );
 
     return myPromise;
   };

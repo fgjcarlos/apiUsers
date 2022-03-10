@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var collection = GetCollection("users")
@@ -25,13 +24,13 @@ func Create(user u.User) error {
 	return nil
 }
 
-func ReadUserById(userId string) (u.User, error) {
+func ReadUserById(userId int) (u.User, error) {
 
 	var user u.User
 
-	oid, _ := primitive.ObjectIDFromHex(userId)
+	// oid, _ := primitive.ObjectIDFromHex(userId)
 
-	filter := bson.M{"_id": oid}
+	filter := bson.M{"_id": userId}
 
 	err := collection.FindOne(ctx, filter).Decode(&user)
 
@@ -69,12 +68,12 @@ func ReadUsers() (u.Users, error) {
 	return users, nil
 }
 
-func UpdateUser(user u.User, userID string) error {
+func UpdateUser(user u.User, userID int) error {
 	var err error
 
-	oid, _ := primitive.ObjectIDFromHex(userID)
+	// oid, _ := primitive.ObjectIDFromHex(userID)
 
-	filter := bson.M{"_id": oid}
+	filter := bson.M{"_id": userID}
 
 	update := bson.M{
 		"$set": bson.M{
@@ -93,17 +92,17 @@ func UpdateUser(user u.User, userID string) error {
 	return nil
 }
 
-func DeleteUser(userID string) error {
+func DeleteUser(userID int) error {
 
 	var err error
 
-	oid, _ := primitive.ObjectIDFromHex(userID)
+	// oid, _ := primitive.ObjectIDFromHex(userID)
 
 	if err != nil {
 		return err
 	}
 
-	filter := bson.M{"_id": oid}
+	filter := bson.M{"_id": userID}
 
 	_, err = collection.DeleteOne(ctx, filter)
 
@@ -112,4 +111,18 @@ func DeleteUser(userID string) error {
 	}
 
 	return nil
+}
+
+// Get amount of users and sum 1 for ID
+func GenerateUserID() (int, error) {
+
+	filter := bson.M{}
+
+	amountUsers, err := collection.CountDocuments(ctx, filter)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(amountUsers) + 1, nil
 }

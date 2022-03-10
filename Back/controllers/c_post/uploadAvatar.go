@@ -20,6 +20,7 @@ func UploadAvatar(c *gin.Context) {
 		c.JSON(400, gin.H{
 			"message": "Fail. body is empty",
 		})
+		return
 	}
 
 	// ## Set new file name

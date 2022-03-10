@@ -5,7 +5,7 @@ import (
 	u "apiBack/db/models"
 )
 
-func UpdateUser(user u.User, userID string) error {
+func UpdateUser(user u.User, userID int) error {
 
 	err := dbController.UpdateUser(user, userID)
 
@@ -13,10 +13,5 @@ func UpdateUser(user u.User, userID string) error {
 		return err
 	}
 
-	// c.JSON(200, gin.H{
-	// 	"message": "Updated user succesfully",
-	// })
-
 	return nil
-
 }
