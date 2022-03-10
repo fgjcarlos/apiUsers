@@ -1,20 +1,29 @@
 package main
 
 import (
-	"apiBack/controllers/get"
-	u "apiBack/utils"
+	"apiBack/controllers/c_get"
+	"apiBack/controllers/c_post"
+
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
 	// Load var env
-	u.LoadEnv()
+	// u.LoadEnv()
+	pathEnvFile := "/home/fgjcarlos/Escritorio/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
+	errDotenv := godotenv.Load(pathEnvFile)
+
+	if errDotenv != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	var PORT = os.Getenv("PORT")
 	var HOST = os.Getenv("HOST")
 
@@ -25,53 +34,39 @@ func main() {
 
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
-	r.POST("/upload", func(c *gin.Context) {
+	// Static files
+	r.Static("/static", "./media/")
+	r.StaticFile("/favicon.ico", "./resources/favicon.ico")
 
-		file, err := c.FormFile("file")
-		if err != nil {
-			log.Panic(err)
+	// *Group of uploads, endpoint "UPLOAD"
+	// TODO --> Add a middelware type acces key
+	uploadGroup := r.Group("/upload")
+	{
+		// *Single upload
+		singleUploadGroup := uploadGroup.Group("/single")
+		{
+			singleUploadGroup.POST("/avatar", c_post.UploadAvatar)
 		}
 
-		// Upload to disk
-		err = c.SaveUploadedFile(file, "./media/avatars/"+file.Filename)
+		// *Multi
+	}
 
-		if err != nil {
-			c.JSON(400, gin.H{
-				"message": "Fail. body is empty",
-			})
-		}
+	// *Endpoint "AVATAR"
+	avatarGroup := r.Group("/avatar")
+	{
+		avatarGroup.GET("/all", c_get.GetAllAvatars)
+		avatarGroup.GET("/:id", c_get.GetAvatarById)
+	}
 
-		c.JSON(200, gin.H{
-			"message": file.Filename + "uploaded!",
-		})
-
-		// c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
-	})
-
-	r.POST("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": c.ClientIP(),
-		})
-	})
-
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	r.GET("/home", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Home page",
-		})
-	})
-
-	r.GET("/users", func(c *gin.Context) {
-		get.GetUsers(c)
-	})
+	r.GET("/", homePage)
 
 	// Start server
-	r.Run(fmt.Sprintf("%s:%s", HOST, PORT)) // Sirve y escucha peticiones en 0.0.0.0:8080
+	r.Run(fmt.Sprintf("%s:%s", HOST, PORT))
+}
 
-	// now do something with s3 or whatever
+func homePage(c *gin.Context) {
+
+	c.JSON(200, gin.H{
+		"message": "Home Page",
+	})
 }

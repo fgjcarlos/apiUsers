@@ -1,50 +1,59 @@
 // DEPENDENCIES
-import { useState } from 'react'
-// COOMPONENTS
+import { useRef } from 'react'
+import { useRouter } from 'next/router';
+import { Toaster } from 'react-hot-toast';
+// COMPONENTS
 import Button from "components/Button";
+// HOOKS
+import useUploadSingleAvatar from 'hooks/useUploadSingleFile';
 
 export default function UploadAvatar() {
 
-    const [avatar, setAvatar] = useState(null)
-    const urlServer = "http://192.168.1.135:3001/upload"
+    const router = useRouter()
 
-    // TODO --> Make a custom hook useUploadSingleFile, add type to save in back in correct dir
+    const [_, setFile, handleUpload] = useUploadSingleAvatar()
 
-
-    const handleUpload = async (e) => {
-        e.preventDefault()
-
-        const formData = new FormData()
-        formData.append("file", avatar)
-
-        const response = await fetch(urlServer, {
-            method: "POST",
-            body: formData,
-        })
-
-        if(response.ok){
-            console.log("El archivo se ha subido correctamente");
-        }else {
-            console.log("Ha ocurrido un error en la subida del archivo");
-        }
-
-    }
+    const formRef = useRef();
 
     const inputChange = (e) => {
+        if (!e.target.files?.length) return;
+        setFile({
+            file: e.target.files[0],
+            dir: "avatars",
+            type: "avatar"
+        })
+    }
 
-        if (!e.target.files?.length) {
-            return;
+    const onClick = async (e) => {
+
+        e.preventDefault()
+        const response = await handleUpload()
+
+        if (response && response.ok) {
+            console.log(await response.json());
+            formRef.current.reset()
+            setFile(null)
         }
-
-        setAvatar(e.target.files[0])
     }
 
     return (
         <div className="flex justify-center items-center w-screen h-screen bg-slate-100">
-            <form className="bg-white rounded-2xl flex justify-evenly items-center flex-col h-2/3 w-3/5 shadow-2xl">
-                <label htmlFor="avatar">Upload avatar</label>
-                <input type="file" name="file" onChange={inputChange} />
-                <Button onClick={handleUpload}>Upload</Button>
+            <form
+                ref={formRef}
+                className="bg-white rounded-2xl flex justify-evenly items-center flex-col h-2/3 w-3/5 shadow-2xl"
+            >
+                <label 
+                htmlFor="avatar"
+                className='capitalize font-bold text-3xl'
+                >Upload avatar</label>
+                <input
+                    className='cursor-pointer block w-4/5 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 truncate'
+                    type="file"
+                    name="file"
+                    onChange={inputChange}
+                />
+                <Button onClick={onClick}>Upload</Button>
+                <Toaster />
             </form>
         </div>
     )

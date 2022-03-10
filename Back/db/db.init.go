@@ -1,13 +1,13 @@
 package db
 
 import (
-	u "apiBack/utils"
 	"context"
 	"fmt"
 	"log"
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -15,7 +15,13 @@ import (
 func GetCollection(collection string) *mongo.Collection {
 
 	//load env
-	u.LoadEnv()
+
+	pathEnvFile := "/home/fgjcarlos/Escritorio/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
+	errDotenv := godotenv.Load(pathEnvFile)
+
+	if errDotenv != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	var MONGO_HOST = os.Getenv("MONGO_HOST")
 	var MONGODB_PORT = os.Getenv("MONGODB_PORT")

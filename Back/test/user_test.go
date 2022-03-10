@@ -1,10 +1,10 @@
 package test
 
 import (
-	"apiBack/controllers/delete"
-	"apiBack/controllers/get"
-	"apiBack/controllers/post"
-	"apiBack/controllers/update"
+	"apiBack/db/delete"
+	"apiBack/db/get"
+	"apiBack/db/post"
+	"apiBack/db/update"
 
 	u "apiBack/db/models"
 	"testing"
