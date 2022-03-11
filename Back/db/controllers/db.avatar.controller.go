@@ -1,6 +1,7 @@
 package db
 
 import (
+	"apiBack/db"
 	a "apiBack/db/models"
 	"context"
 	"time"
@@ -9,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var collectionAvatars = GetCollection("avatars")
+var collectionAvatars = db.GetCollection("avatars")
 var ctxAvatars = context.Background()
 
 func CreateAvatar(avatar a.Avatar) error {
@@ -70,10 +71,10 @@ func ReadAvatars() (a.Avatars, error) {
 	return avatars, nil
 }
 
-func UpdateAvatar(avatar a.Avatar, userID string) error {
+func UpdateAvatar(avatar a.Avatar, CharacterID string) error {
 	var err error
 
-	oid, _ := primitive.ObjectIDFromHex(userID)
+	oid, _ := primitive.ObjectIDFromHex(CharacterID)
 
 	filter := bson.M{"_id": oid}
 

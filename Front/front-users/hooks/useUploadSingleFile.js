@@ -1,9 +1,8 @@
 // DEPENDENCIES
 import { useState } from "react";
-import toast from "react-hot-toast";
 
-export default function useUploadSingleAvatar() {
-  const urlServer = "http://192.168.1.135:3001/upload/single/avatar";
+export default function useUploadAvatar() {
+  const urlServer = "http://192.168.1.135:3001/upload";
 
   const [file, setFile] = useState(null);
 
@@ -11,9 +10,15 @@ export default function useUploadSingleAvatar() {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("file", file.file);
     formData.append("dir", file.dir);
     formData.append("type", file.type);
+    formData.append("style", { backgroundColor: "#fff" });
+
+    const files = file.files;
+
+    for (let i = 0; i < files.length; i++) {
+      formData.append(`files[]`, files[i]);
+    }
 
     const myPromise = await fetch(urlServer, {
       method: "POST",

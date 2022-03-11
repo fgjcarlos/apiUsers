@@ -13,7 +13,8 @@ func UploadAvatar(c *gin.Context) {
 	// # Get data
 	file, err := c.FormFile("file")
 	var dir = c.PostForm("dir")
-	var typeFile = c.PostForm("type")
+	var style = c.PostFormMap("style")
+	// var typeFile = c.PostForm("type")
 
 	if (err) != nil {
 		log.Panic(err)
@@ -43,20 +44,17 @@ func UploadAvatar(c *gin.Context) {
 	errSave := c.SaveUploadedFile(file, urlDirSave)
 
 	if errSave != nil {
-		log.Panic(err)
+		log.Panic(errSave)
 	}
 
-	var errDb error
-
-	if typeFile == "avatar" {
-		errDb = utils.UploadAvatar(newFileName, urlDir)
-	}
+	errDb := utils.UploadAvatar(newFileName, urlDir, style)
 
 	if errDb != nil {
 		log.Panic(errDb)
 		c.JSON(500, gin.H{
 			"message": "Fail to save in db",
 		})
+		return
 	}
 
 	var message = fmt.Sprintf("%s uploaded!", newFileName)

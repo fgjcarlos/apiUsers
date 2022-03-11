@@ -1,7 +1,7 @@
 package get
 
 import (
-	dbController "apiBack/db"
+	dbController "apiBack/db/controllers"
 	a "apiBack/db/models"
 )
 

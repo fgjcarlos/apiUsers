@@ -6,9 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetAllAvatars(c *gin.Context) {
+func GetCharacterById(c *gin.Context) {
 
-	avatars, err := get.GetAvatars()
+	id := c.Param("id")
+
+	Character, err := get.GetCharacterById(id)
 
 	if err != nil {
 		// log.Panic(err)
@@ -19,7 +21,8 @@ func GetAllAvatars(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message": "Obtained avatar list successfully",
-		"avatars": avatars,
+		"message":   "Obtained Character successfully",
+		"Character": Character,
 	})
+
 }

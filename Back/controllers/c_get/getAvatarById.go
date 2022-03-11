@@ -1,7 +1,7 @@
 package c_get
 
 import (
-	"apiBack/db/get"
+	"apiBack/services/get"
 
 	"github.com/gin-gonic/gin"
 )

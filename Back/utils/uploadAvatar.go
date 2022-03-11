@@ -2,16 +2,17 @@ package utils
 
 import (
 	"apiBack/db/models"
-	"apiBack/db/post"
+	"apiBack/services/post"
 	"time"
 )
 
-func UploadAvatar(fileName string, urlDir string) error {
+func UploadAvatar(fileName string, urlDir string, style map[string]string) error {
 
 	// # Create new avatar
 	newAvatar := models.Avatar{
 		Name:      fileName,
 		Url:       urlDir,
+		Style:     style,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}

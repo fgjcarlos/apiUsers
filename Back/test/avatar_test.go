@@ -1,11 +1,11 @@
 package test
 
 import (
-	"apiBack/db/delete"
-	"apiBack/db/get"
 	a "apiBack/db/models"
-	"apiBack/db/post"
-	"apiBack/db/update"
+	"apiBack/services/delete"
+	"apiBack/services/get"
+	"apiBack/services/post"
+	"apiBack/services/update"
 	"testing"
 	"time"
 
@@ -90,7 +90,7 @@ func TestDeleteAvatar(t *testing.T) {
 	err := delete.DeleteAvatar(avatarID)
 
 	if err != nil {
-		t.Error("Delete user test failed")
+		t.Error("Delete Character test failed")
 		t.Fail()
 	} else {
 		t.Log("The test finished successfully")

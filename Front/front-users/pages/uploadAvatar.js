@@ -1,40 +1,28 @@
 // DEPENDENCIES
 import { useRef } from 'react'
-import { useRouter } from 'next/router';
 import { Toaster } from 'react-hot-toast';
 // COMPONENTS
 import Button from "components/Button";
 // HOOKS
-import useUploadSingleAvatar from 'hooks/useUploadSingleFile';
+import useUploadAvatar from 'hooks/useUploadSingleFile';
+// UTILS
+import { throwSuccessToast, throwErrorToast, throwLoadingToast } from 'utils/toast'
+import  { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function UploadAvatar() {
 
-    const router = useRouter()
-
-    const [file, setFile, handleUpload] = useUploadSingleAvatar()
+    const [file, setFile, handleUpload] = useUploadAvatar()
 
     const formRef = useRef();
 
     const inputChange = (e) => {
         if (!e.target.files?.length) return;
+
         setFile({
-            file: e.target.files[0],
+            files: e.target.files,
             dir: "avatars",
             type: "avatar"
-        })
-    }
-
-
-    const throwSuccessToast = () => {
-        toast.success('The file has been uploaded successfully.', {
-            duration: 4000,
-        })
-    }
-
-    const throwErrorToast = () => {
-        toast.error('An error has occurred.', {
-            duration: 4000,
         })
     }
 
@@ -42,18 +30,26 @@ export default function UploadAvatar() {
 
         e.preventDefault()
 
+        const messageLoading = "Uploading data... Wait please."
+        const messageOk = "The file has been uploaded successfully."
+        const messageError = "An error has occurred."
+        const duration = 4000
+
         if (file) {
+
+            const toastLoading = throwLoadingToast(messageLoading)
 
             const response = await handleUpload()
 
+            toast.dismiss(toastLoading);
+
             response.ok
-                ? throwSuccessToast()
-                : throwErrorToast()
+                ? throwSuccessToast(messageOk, duration)
+                : throwErrorToast(messageError, duration)
 
             // *Reset form and state file
             formRef.current.reset()
             setFile(null)
-
         }
 
     }
@@ -67,12 +63,13 @@ export default function UploadAvatar() {
                 <label
                     htmlFor="avatar"
                     className='capitalize font-bold text-3xl'
-                >Upload avatar</label>
+                >Upload avatar/s</label>
                 <input
                     className='cursor-pointer block w-4/5 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 truncate'
                     type="file"
                     name="file"
                     onChange={inputChange}
+                    multiple={true}
                 />
                 <Button onClick={onClick}>Upload</Button>
                 <Toaster />

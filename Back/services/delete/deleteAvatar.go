@@ -1,6 +1,6 @@
 package delete
 
-import dbController "apiBack/db"
+import dbController "apiBack/db/controllers"
 
 func DeleteAvatar(avatarID string) error {
 
