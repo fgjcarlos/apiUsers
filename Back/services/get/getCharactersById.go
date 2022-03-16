@@ -5,7 +5,7 @@ import (
 	u "apiBack/db/models"
 )
 
-func GetCharacterById(CharacterID string) (u.Character, error) {
+func GetCharacterById(CharacterID int) (u.Character, error) {
 
 	Character, err := dbController.ReadCharacterById(CharacterID)
 

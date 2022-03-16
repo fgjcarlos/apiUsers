@@ -41,22 +41,6 @@ func main() {
 	// TODO --> Add a middelware type acces key
 	r.POST("/upload", c_post.UploadFile)
 
-	// uploadGroup := r.Group("/upload")
-	// {
-	// 	// *Single upload
-	// 	singleUploadGroup := uploadGroup.Group("/single")
-	// 	{
-	// 		singleUploadGroup.POST("/avatar", c_post.UploadAvatar)
-	// 	}
-
-	// 	// *Multi
-
-	// 	multiUploadGroup := uploadGroup.Group("multiple")
-	// 	{
-	// 		multiUploadGroup.POST("/avatar", c_post.MultiUploadAvatar)
-	// 	}
-	// }
-
 	// *Endpoint "AVATAR"
 	avatarGroup := r.Group("/avatar")
 	{
@@ -69,6 +53,7 @@ func main() {
 	{
 		charactersGroup.GET("/all", c_get.GetAllCharacters)
 		charactersGroup.GET("/:id", c_get.GetCharacterById)
+		charactersGroup.POST("/add", c_post.AddCharacter)
 	}
 
 	// *Endopint "USERS"

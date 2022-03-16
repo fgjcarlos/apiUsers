@@ -26,13 +26,13 @@ func Create(Character u.Character) error {
 	return nil
 }
 
-func ReadCharacterById(CharacterId string) (u.Character, error) {
+func ReadCharacterById(CharacterId int) (u.Character, error) {
 
 	var Character u.Character
 
-	oid, _ := primitive.ObjectIDFromHex(CharacterId)
+	// oid, _ := primitive.ObjectIDFromHex(CharacterId)
 
-	filter := bson.M{"_id": oid}
+	filter := bson.M{"_id": CharacterId}
 
 	err := collection.FindOne(ctx, filter).Decode(&Character)
 

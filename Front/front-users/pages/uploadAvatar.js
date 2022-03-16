@@ -7,7 +7,7 @@ import Button from "components/Button";
 import useUploadAvatar from 'hooks/useUploadSingleFile';
 // UTILS
 import { throwSuccessToast, throwErrorToast, throwLoadingToast } from 'utils/toast'
-import  { useState } from 'react';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function UploadAvatar() {
@@ -54,6 +54,7 @@ export default function UploadAvatar() {
 
     }
 
+
     return (
         <div className="flex justify-center items-center w-screen h-screen bg-slate-100">
             <form
@@ -63,7 +64,9 @@ export default function UploadAvatar() {
                 <label
                     htmlFor="avatar"
                     className='capitalize font-bold text-3xl'
-                >Upload avatar/s</label>
+                >
+                    Upload avatar/s
+                </label>
                 <input
                     className='cursor-pointer block w-4/5 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 truncate'
                     type="file"

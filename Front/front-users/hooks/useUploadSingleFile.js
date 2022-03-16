@@ -12,7 +12,6 @@ export default function useUploadAvatar() {
     const formData = new FormData();
     formData.append("dir", file.dir);
     formData.append("type", file.type);
-    formData.append("style", { backgroundColor: "#fff" });
 
     const files = file.files;
 
@@ -21,6 +20,7 @@ export default function useUploadAvatar() {
     }
 
     const myPromise = await fetch(urlServer, {
+      // headers: { "Content-Type": "application/x-www-form-urlencoded" },
       method: "POST",
       body: formData,
     });

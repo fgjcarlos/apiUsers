@@ -32,10 +32,8 @@ func UploadFile(c *gin.Context) {
 		newFileName, errID := utils.NewFileName(file.Filename)
 
 		if errID != nil {
-			// log.Panic(errID)
-			c.JSON(500, gin.H{
-				"message": "Fail to get uuid",
-			})
+			// // log.Panic(errID)
+			c.JSON(500, gin.H{"message": "Fail to get uuid"})
 			return
 		}
 
@@ -52,9 +50,7 @@ func UploadFile(c *gin.Context) {
 
 		if errSave != nil {
 			// log.Panic(errSave)
-			c.JSON(500, gin.H{
-				"message": "Fail to save in disk",
-			})
+			c.JSON(500, gin.H{"message": "Fail to save in disk"})
 			return
 		}
 
@@ -63,20 +59,17 @@ func UploadFile(c *gin.Context) {
 
 		switch typeFile {
 		case "avatar":
-			var style = c.PostFormMap("style")
-			errDb = utils.UploadAvatar(newFileName, urlDir, style)
+			errDb = utils.UploadAvatar(newFileName, urlDir)
 		default:
-			c.JSON(500, gin.H{
-				"message": "not type",
-			})
+			c.JSON(500, gin.H{"message": "Not type file"})
 			return
 		}
 
 		if errDb != nil {
+			// Delete file created if exit error in save db
+			utils.DeleteFile(urlDirSave)
 			// log.Panic(errDb)
-			c.JSON(500, gin.H{
-				"message": "Fail to save in db",
-			})
+			c.JSON(500, gin.H{"message": "Fail to save in db"})
 			return
 		}
 
