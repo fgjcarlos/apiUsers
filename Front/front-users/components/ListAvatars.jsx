@@ -1,5 +1,7 @@
-import React, { useRef, useState } from "react";
+// DEPENDENCIES
+import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+// COMPONENTS
 import { Avatar } from "./Avatar";
 
 export default function ListAvatars({ avatars }) {

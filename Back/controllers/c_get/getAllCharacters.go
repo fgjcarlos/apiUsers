@@ -26,7 +26,7 @@ func GetAllCharacters(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message": message,
-		"avatars": Characters,
+		"message":    message,
+		"characters": Characters,
 	})
 }

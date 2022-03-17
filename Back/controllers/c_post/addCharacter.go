@@ -14,8 +14,6 @@ func AddCharacter(c *gin.Context) {
 
 	err := c.BindJSON(&character)
 
-	// TODO -> Add ID
-
 	if err != nil {
 		c.JSON(400, gin.H{
 			"message": "No correct data",
@@ -24,7 +22,6 @@ func AddCharacter(c *gin.Context) {
 	}
 
 	// Save in DB
-
 	character.ID, err = db.GenerateCharacterID()
 	err = post.AddCharacter(character)
 

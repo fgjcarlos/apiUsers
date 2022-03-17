@@ -1,8 +1,11 @@
 package c_post
 
 import (
+	"apiBack/db/models"
+	"apiBack/services/post"
 	"apiBack/utils"
 	"fmt"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,7 +62,18 @@ func UploadFile(c *gin.Context) {
 
 		switch typeFile {
 		case "avatar":
-			errDb = utils.UploadAvatar(newFileName, urlDir)
+
+			// # Create new avatar
+			newAvatar := models.Avatar{
+				Name:      newFileName,
+				Url:       urlDir,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}
+
+			// # Save to db
+			errDb = post.AddAvatar(newAvatar)
+
 		default:
 			c.JSON(500, gin.H{"message": "Not type file"})
 			return

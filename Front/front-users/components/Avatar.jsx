@@ -12,8 +12,6 @@ export function Avatar({ avatarActive, onClick, avatar, lazyRoot, bg }) {
     const typeStyle = (bg || avatar.style.backgroundColor) ? avatarCardStyle : defaultStyle
 
 
-    console.log("avatar.style", avatar.style.backgroundColor)
-
     const [showTooltip, setToolTip] = useState(false)
 
     const ToolTip = () => {

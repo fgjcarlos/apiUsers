@@ -7,7 +7,6 @@ import Button from "components/Button";
 import useUploadAvatar from 'hooks/useUploadSingleFile';
 // UTILS
 import { throwSuccessToast, throwErrorToast, throwLoadingToast } from 'utils/toast'
-import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 export default function UploadAvatar() {
@@ -56,19 +55,19 @@ export default function UploadAvatar() {
 
 
     return (
-        <div className="flex justify-center items-center w-screen h-screen bg-slate-100">
+        <div className="flex items-center justify-center w-screen h-screen bg-slate-100">
             <form
                 ref={formRef}
-                className="bg-white rounded-2xl flex justify-evenly items-center flex-col h-2/3 w-3/5 shadow-2xl"
+                className="flex flex-col items-center w-3/5 bg-white shadow-2xl rounded-2xl justify-evenly h-2/3"
             >
                 <label
                     htmlFor="avatar"
-                    className='capitalize font-bold text-3xl'
+                    className='text-3xl font-bold capitalize'
                 >
                     Upload avatar/s
                 </label>
                 <input
-                    className='cursor-pointer block w-4/5 text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 truncate'
+                    className='block w-4/5 text-sm truncate cursor-pointer text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100'
                     type="file"
                     name="file"
                     onChange={inputChange}

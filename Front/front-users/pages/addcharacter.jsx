@@ -1,122 +1,111 @@
-import Modal from './../components/Modal';
-import Button from "components/Button";
-import { Field } from "formik";
-import { ErrorMessage } from "formik";
-import { Form } from "formik";
-import { Formik } from "formik";
-import Image from "next/image";
-import { useState } from 'react'
-import ListAvatars from 'components/ListAvatars';
-import { RgbaColorPicker } from "react-colorful";
+import { ChooseAvatar } from './../components/ChooseAvatar';
+// DEPENDENCIES
+import { useState, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
+import Image from "next/image";
+import { Formik, Field, ErrorMessage, Form } from "formik";
+import toast, { Toaster } from 'react-hot-toast';
+// COMPONENTS
+import ChooseBgAvatar from '../components/ChooseBgAvatar';
+import Modal from '../components/Modal';
+import Button from "components/Button";
 import { Avatar } from 'components/Avatar';
+// RESOURCES
 import AvatarDefault from 'public/avatarDefault.png'
-import AvatarSkeleton from 'skeletons/AvatarSkeleton';
+import { throwErrorToast, throwLoadingToast, throwSuccessToast } from 'utils/toast';
 
 export default function Addcharacter(props) {
 
     const { avatars } = props
-    const [showModal, setShowModal] = useState(false)
-    const [showConfgAvatar, setConfigAvatar] = useState(false)
+    const formRef = useRef();
 
-    const [color, setColor] = useState({ r: 255, g: 255, b: 255, a: 1 });
+    const [showModalChooseAvatar, setShowModalChooseAvatar] = useState(false)
+    const [showModalChooseBgAvatar, setShowModalChooseBgAvatar] = useState(false)
+
     const listInterests = ["sports", "music", "travel", "cuture"]
 
-    const storeAvatar = useSelector((s) => s.avatar);
     const dispatch = useDispatch();
+    const storeAvatar = useSelector((s) => s.avatar);
 
-
-    const handleSetBgAvatar = () => {
-        dispatch({
-            type: "@avatar/updateStyle", payload: {
-                backgroundColor: `rgba(${color.r},${color.g},${color.b},${color.a})`
-            }
-        })
-
-        setColor({ r: 255, g: 255, b: 255, a: 1 })
-        setConfigAvatar(false)
-    }
-
-    const handleChooseAvatar = (e) => {
+    const handleSetChooseAvatar = (e) => {
         e.preventDefault()
-        setShowModal(true)
+        setShowModalChooseAvatar(true)
     }
 
-    const handleConfigAvatar = () => {
-        setShowModal(false)
-        setConfigAvatar(true)
+    const handleConfigAvatar = (e) => {
+        e.preventDefault()
+        setShowModalChooseAvatar(false)
+        setShowModalChooseBgAvatar(true)
     }
 
     // Max and min date
     // Max date -> 120 years
     // Min date --> date now - 18 year
 
+    const handleSubmit = async (values, { setSubmitting }) => {
+
+        const urlServer = "http://192.168.1.135:3001/character/add";
+
+        const messageLoading = "Uploading data... Wait please."
+        const messageOk = "The character has been added successfully."
+        const messageError = "An error has occurred."
+        const duration = 10000
+
+        // e.preventDefault()
+
+        // TODO -> Created_by and time to utc
+        const character = { ...values, avatar: storeAvatar, Created_by: "admin", birthday: Date.UTC(), }
+
+        const toastLoading = throwLoadingToast(messageLoading)
+
+        const response = await fetch(urlServer, {
+            method: "POST",
+            body: JSON.stringify({ ...character }),
+        });
+
+        toast.dismiss(toastLoading);
+
+        response.ok
+            ? throwSuccessToast(messageOk, duration)
+            : throwErrorToast(messageError, duration)
+
+        // *Reset form and avatar
+        /// TODO -> reset created_by, 
+        setTimeout(() => {
+            formRef.current.reset()
+            dispatch({ type: "@avatar/reset" })
+        }, 2000);
+    }
+
     return (
         <>
-            <div className='w-full p-5'>
+            <div>
+                <Toaster />
                 <h1>Add Character</h1>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis porro consequatur impedit quaerat omnis quis voluptatibus commodi culpa molestias, perspiciatis neque similique, rem laudantium veniam eligendi? Est consequuntur odio corporis.
                     Reprehenderit vel quibusdam excepturi. Dignissimos tempore adipisci saepe? Excepturi, vero nesciunt quod repellat facilis laboriosam iste necessitatibus a inventore natus delectus porro ipsam! Delectus modi, nisi tempore quo nobis illo!
                 </p>
 
+                {showModalChooseAvatar &&
+                    <Modal>
+                        <ChooseAvatar
+                            avatars={avatars}
+                            onExit={() => setShowModalChooseAvatar(false)}
+                            onDone={handleConfigAvatar}
+                        />
+                    </Modal>
+                }
                 {
-                    showConfgAvatar &&
+                    showModalChooseBgAvatar &&
                     <Modal>
-                        <div className='max-w-3xl h-full w-[90%] bg-white p-10 box-border flex flex-col justify-between items-stretch'>
-
-                            <h1 className='mt-2 mb-2 text-2xl font-bold text-center'>
-                                Select background of your avatar
-                            </h1>
-
-                            <div className='box-border flex flex-wrap items-center justify-around gap-10 rounded-md h-4/6'>
-
-                                <div className='w-56 h-60'>
-                                    <Avatar avatar={storeAvatar} bg={color} onClick={handleChooseAvatar} />
-                                </div>
-
-
-
-                                <RgbaColorPicker
-                                    style={{ height: `13rem` }}
-                                    className='rounded-lg h-52'
-                                    color={color} onChange={setColor}
-                                />
-                            </div>
-
-                            <Button
-                                onClick={handleSetBgAvatar}
-                                classButton="self-end mr-5"
-                            >
-                                Done
-                            </Button>
-
-
-                        </div>
+                        <ChooseBgAvatar
+                            handleSetChooseAvatar={handleSetChooseAvatar}
+                            onDone={() => setShowModalChooseBgAvatar(false)}
+                        />
                     </Modal>
                 }
 
-                {showModal &&
-                    <Modal>
-                        <div className='flex flex-col items-center justify-between h-full gap-1 p-5'>
-                            <h1 className='my-2 text-xl font-bold'>
-                                Choose the avatar
-                            </h1>
 
-                            <ListAvatars avatars={avatars} />
-
-                            <div className='flex w-2/3 my-4 justify-evenly'>
-                                <Button onClick={handleConfigAvatar} state={!storeAvatar}>
-                                    Done
-                                </Button>
-                                <Button onClick={() => setShowModal(false)}>
-                                    Exit
-                                </Button>
-                            </div>
-
-
-                        </div>
-                    </Modal>
-                }
                 <Formik
                     initialValues={{ name: '', birthday: '', profession: '', interests: "", gender: "", biography: "" }}
                     validate={values => {
@@ -134,40 +123,12 @@ export default function Addcharacter(props) {
 
                         return errors
                     }}
-                    onSubmit={async (values, { setSubmitting }) => {
-
-                        const urlServer = "http://192.168.1.135:3001/character/add";
-
-                         const character = { ...values, avatar: storeAvatar, Created_by: "admin", birthday: Date.UTC(), }
-                      
-
-                        // const character = {
-                        //     name: values.name,
-                        //     avatar: storeAvatar,
-                        //     birthday: Date.UTC(),
-                        //     profession: values.profession,
-                        //     biography: values.biography
-
-                        // }
-
-                        // const formData = new FormData();
-                        // formData.append("character", character);
-
-                        console.log(character);
-
-
-                        const myPromise = await fetch(urlServer, {
-                            // headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                            method: "POST",
-                            body: JSON.stringify({...character}),
-                        });
-
-                        ;
-                        console.log(myPromise)
-                    }}
+                    onSubmit={handleSubmit}
                 >
                     {({ isSubmitting }) => (
                         <Form
+                            ref={formRef}
+
                             className="md:w-1/2 xl:w-2/5 w-11/12 min-w-[300px] mx-auto my-0 mt-10 flex justify-center flex-col p-10 shadow-xl rounded border  h-auto gap-5"
                         >
 
@@ -189,7 +150,7 @@ export default function Addcharacter(props) {
                                     }
                                     <Button
 
-                                        onClick={handleChooseAvatar}>
+                                        onClick={handleSetChooseAvatar}>
                                         Select avatar
                                     </Button>
                                 </div>
