@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Image from "next/image";
 import { Formik, Field, ErrorMessage, Form } from "formik";
 import toast, { Toaster } from 'react-hot-toast';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 // COMPONENTS
 import ChooseBgAvatar from '../components/ChooseBgAvatar';
 import Modal from '../components/Modal';
@@ -54,8 +56,11 @@ export default function Addcharacter(props) {
         // e.preventDefault()
 
         // TODO -> Created_by and time to utc
-        const character = { ...values, avatar: storeAvatar, Created_by: "admin", birthday: Date.UTC(), }
+        dayjs.extend(utc)
+        const character = { ...values, avatar: storeAvatar, Created_by: "admin", birthday: dayjs(values.birthday).format() }
 
+        console.log('character', character)  // TODO -> Remove
+        console.log(dayjs(values.birthday).format())  // TODO -> Remove);
         const toastLoading = throwLoadingToast(messageLoading)
 
         const response = await fetch(urlServer, {
@@ -71,7 +76,7 @@ export default function Addcharacter(props) {
 
         // *Reset form and avatar
         /// TODO -> reset created_by, 
-        setTimeout(() => {
+        response.ok && setTimeout(() => {
             formRef.current.reset()
             dispatch({ type: "@avatar/reset" })
         }, 2000);
@@ -120,7 +125,7 @@ export default function Addcharacter(props) {
                         // }
 
 
-
+                        Date.UTC()
                         return errors
                     }}
                     onSubmit={handleSubmit}

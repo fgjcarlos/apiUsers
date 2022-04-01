@@ -19,8 +19,9 @@ func TestCreateAvatar(t *testing.T) {
 	oid := primitive.NewObjectID()
 	avatarID = oid.Hex()
 
-	capitals := map[string]string{ //Shorthand composite literal
-		"backgroundColor": "#fff"}
+	capitals := a.StyleAvatar{
+		Background: "#f5f5f5",
+	}
 
 	avatar := a.Avatar{
 		ID:        oid,
@@ -67,10 +68,14 @@ func TestGetAvatars(t *testing.T) {
 
 func TestUpdateAvatar(t *testing.T) {
 
+	capitals := a.StyleAvatar{
+		Background: "#f5f5f5",
+	}
+
 	avatar := a.Avatar{
 		Name:      "Manolo",
 		Url:       "www.marca.com",
-		Style:     map[string]string{"backgroundColor": "#000"},
+		Style:     capitals,
 		UpdatedAt: time.Now(),
 	}
 

@@ -1,23 +1,32 @@
 // DEPENDENCIES
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Pagination, Navigation } from "swiper";
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+// CSS
 import 'swiper/css';
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 import Image from 'next/image';
 // RESOURCES
-import { serverStaticDir } from 'utils/globalVars';
+import { serverHost, serverStaticDir } from 'utils/globalVars';
+// COMPONENTS
+import Modal from 'components/Modal';
+import Button from 'components/Button';
+import Link from 'next/link';
 
 export default function Home(props) {
 
+  dayjs.extend(customParseFormat)
+  const [characterSelected, setCharacterSelected] = useState(false);
+  const [showModalCharacter, setShowModalCharacter] = useState(false)
   const lazyRoot = useRef(null)
 
   const { characters } = props
 
-
-  console.log(characters[0].avatar?.style?.backgroundColor);
-
   return (
-    <div className="">
+    <>
       <div className="relative bg-bgHeroHome2 after:absolute after:inset-0 after:z-[11] after:block after:w-full after:h-full  after:bg-[#303030] after:bg-opacity-60  bg-cover h-full  lg:h-[50vh] flex justify-center items-center  text-white  ">
         <div className=" lg:w-10/12 z-[12] max-w-[1280px] gap-8 flex-col p-10 flex justify-center items-center">
 
@@ -64,13 +73,85 @@ export default function Home(props) {
 
       </div>
 
-      <div ref={lazyRoot} className="h-[350px] lg:h-[50vh] bg-slate-200 p-5 mb-96">
+
+
+      {
+        showModalCharacter &&
+        <Modal>
+
+          <div className='flex flex-col justify-between w-full h-full gap-4 p-4 overflow-auto sm:p-8 '>
+
+            <div className='relative overflow-hidden shadow-xl self-center shadow-gray-200 rounded-t-[50%] rounded-r-[50%] rounded-l-[50%] rounded-b-[40%] min-h-[25%] w-[80%] sm:w-[40%] sm:min-h-[200px] '
+              style={(characterSelected.avatar.style.backgroundColor === "") ? backgroundColor : characterSelected.avatar.style}
+            >
+              <Image
+                alt={characterSelected.name}
+                src={`${serverStaticDir}${characterSelected.avatar.url}`}
+                objectFit="contain"
+                lazyBoundary="200px"
+                layout="fill"
+              />
+
+            </div>
+
+
+            <div className='flex flex-col w-full h-full gap-1' >
+              <p className='mb-2 mr-4 text-lg font-semibold'>
+                {characterSelected.name}
+              </p>
+              <div className='flex items-center justify-start gap-2'>
+                <label className='text-sm sm:text-base'>Profession:</label>
+                <p className='text-xs text-gray-800 sm:text-sm'>{characterSelected.profession}</p>
+              </div>
+
+              <div className='flex items-center justify-start gap-2'>
+                <label className='text-sm sm:text-base'>Birthday:</label>
+                <p className='text-xs text-gray-800 sm:text-sm'>{dayjs(characterSelected.birthday).format('MMMM DD, YYYY')}</p>
+              </div>
+
+              <div className='flex items-center justify-start gap-2'>
+                <label className='text-sm sm:text-base'>Gender:</label>
+                <p className='text-xs text-gray-800 sm:text-sm'>{characterSelected.gender}</p>
+              </div>
+
+              <div className='flex items-center justify-start gap-2'>
+                <label className='text-sm sm:text-base'>Interests:</label>
+
+                {characterSelected.interests.map((interest, index) =>
+                  <p className='p-[0.15rem] text-[10px] sm:text-sm text-gray-800 capitalize border border-blue-400 rounded-lg' key={index}>
+                    {interest}
+                  </p>
+                )}
+              </div>
+
+              <div className='flex flex-col justify-start gap-2  h-max-[60%] overflow-auto'>
+                <label className='text-sm sm:text-base'>Biography:</label>
+                <p className='flex flex-col px-2 mb-2 overflow-auto text-xs text-gray-800 whitespace-pre-wrap sm:text-sm'>{characterSelected.biography}</p>
+              </div>
+
+
+            </div>
+
+            <Button
+              onClick={() => setShowModalCharacter(false)}
+              classButton={'self-center'}
+            >
+              Exit
+            </Button>
+
+          </div>
+        </Modal>
+
+      }
+
+      <div id='ref' ref={lazyRoot} className="h-[400px] lg:h-[50vh] bg-[#f5f8fd] p-5">
+
         <Swiper
           className="w-10/12 h-full p-5 md:w-full"
           spaceBetween={50}
           slidesPerView={3}
-          onSlideChange={() => console.log('slide change')}
-          onSwiper={(swiper) => console.log(swiper)}
+          // onSlideChange={() => console.log('slide change')}
+          // onSwiper={(swiper) => console.log(swiper)}
           keyboard={{
             enabled: true,
           }}
@@ -102,19 +183,23 @@ export default function Home(props) {
                 key={character.id}
                 style={{ "backgroundColor": `${character.avatar?.style?.backgroundColor}` }}
                 className={`cursor-pointer rounded-2xl overflow-hidden `}
+                onClick={() => {
+                  setShowModalCharacter(true)
+                  setCharacterSelected(character)
+                }}
               >
                 <div className='box-border w-full h-full '>
                   <div className='w-full h-[80%] relative'>
-                  <Image
-                    lazyRoot={lazyRoot}
-                    objectFit="cover"
-                    alt={character?.name}
-                    src={`${serverStaticDir}${character.avatar.url}`}
-                    lazyBoundary="200px"
-                    layout="fill"
-                  />
+                    <Image
+                      lazyRoot={lazyRoot}
+                      objectFit="cover"
+                      alt={character?.name}
+                      src={`${serverStaticDir}${character.avatar.url}`}
+                      lazyBoundary="200px"
+                      layout="fill"
+                    />
                   </div>
-                  <div className='border-t box-border  border-gray-900 flex flex-col w-full gap xl:gap-2 p-2 pl-3 text-sm h-[20%] bg-slate-100'>
+                  <div className='border-t box-border  border-gray-900 flex flex-col w-full gap xl:gap-2 p-2 pl-3 text-sm h-[20%] bg-[#fff]'>
                     <span className='font-semibold capitalize'>{character?.name}</span>
                     <span className='font-light capitalize'>{character?.profession}</span>
                   </div>
@@ -129,9 +214,99 @@ export default function Home(props) {
         </Swiper>
       </div>
 
+      <div className="p-10 pb-5">
+        <h2 className="mb-4 text-xl font-bold">
+          Get routes
+        </h2>
+
+        <p>
+          You have these routes:
+        </p>
+        <ul className='mb-8'>
+          <li className='mt-5 indent-4'>
+            GET
+            <a
+              className='ml-2 text-blue-800 '
+              rel="noopener noreferrer"
+              target="_blank"
+              href={`${serverHost}/character/all`}
+            >
+              /character/all
+            </a>
+          </li>
+
+          <li className='mt-5 indent-4'>
+            GET
+            <a
+              className='ml-2 text-blue-800 '
+              rel="noopener noreferrer"
+              target="_blank"
+              href={`${serverHost}/character/1`}
+            >
+              /character/1
+            </a>
+          </li>
+
+          <li className='mt-5 indent-4'>
+            GET
+            <a
+              className='ml-2 text-blue-800 '
+              rel="noopener noreferrer"
+              target="_blank"
+              href={`${serverHost}/avatar/all`}
+            >
+              /avatar/all
+            </a>
+          </li>
+
+          <li className='mt-5 indent-4'>
+            GET
+            <a
+              className='ml-2 text-blue-800 '
+              rel="noopener noreferrer"
+              target="_blank"
+              href={`${serverHost}/avatar/1`}
+            >
+              /avatar/1
+            </a>
+          </li>
+
+        </ul>
+
+        <p>
+          Check the
+          <Link href={'/guide'}>
+            <a className='mx-1 text-blue-800 '>guide</a>
+          </Link>
+          to see the other routes.
+        </p>
+
+      </div>
+
+      <div className="p-10 pt-5">
+        <h2 className="mb-4 text-xl font-bold">
+          Resources
+        </h2>
+        <p>
+          The images of the avatars belong to Lisa Broedlin,
+
+          you can get more information about this beautiful collection at
+          <br />
+          <br />
+          <a
+            className='uppercase font-bevan'
+            rel="noopener noreferrer"
+            target="_blank"
+            href={`https://powerpeopleplatform.com/`}
+            title='Power People User'
+          >
+           -- power people platform --
+          </a>
+        </p>
+      </div>
 
 
-    </div>
+    </>
   )
 }
 
