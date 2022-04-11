@@ -1,2 +1,2 @@
-export const serverStaticDir = 'http://192.168.1.135:3001/static'
-export const serverHost = 'http://192.168.1.135:3001'
+export const serverHost = "http://192.168.1.136:3001";
+export const serverStaticDir = `${serverHost}/static`;

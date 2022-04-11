@@ -46,6 +46,7 @@ func main() {
 	{
 		avatarGroup.GET("/all", c_get.GetAllAvatars)
 		avatarGroup.GET("/:id", c_get.GetAvatarById)
+		avatarGroup.POST("/add", c_post.AddAvatar)
 	}
 
 	// *Endpoint "CHARACTERS"
@@ -57,6 +58,11 @@ func main() {
 	}
 
 	// *Endopint "USERS"
+	usersGroup := r.Group("/user")
+	{
+		usersGroup.GET("/all", c_get.GetNamesUsers)
+		usersGroup.POST("/register", c_post.RegisterUser)
+	}
 
 	r.GET("/", homePage)
 

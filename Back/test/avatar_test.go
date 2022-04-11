@@ -6,6 +6,7 @@ import (
 	"apiBack/services/get"
 	"apiBack/services/post"
 	"apiBack/services/update"
+	"strconv"
 	"testing"
 	"time"
 
@@ -19,19 +20,21 @@ func TestCreateAvatar(t *testing.T) {
 	oid := primitive.NewObjectID()
 	avatarID = oid.Hex()
 
+	AvatarID, err := strconv.Atoi(avatarID)
+
 	capitals := a.StyleAvatar{
 		Background: "#f5f5f5",
 	}
 
 	avatar := a.Avatar{
-		ID:        oid,
+		ID:        AvatarID,
 		Name:      "FirstAvatar",
 		Style:     capitals,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 
-	err := post.AddAvatar(avatar)
+	err = post.AddAvatar(avatar)
 
 	if err != nil {
 		t.Error("Add avatar test failed")
@@ -43,7 +46,10 @@ func TestCreateAvatar(t *testing.T) {
 }
 
 func TestGetAvatarById(t *testing.T) {
-	avatar, err := get.GetAvatarById(avatarID)
+
+	avatarID_int, err := strconv.Atoi(avatarID)
+
+	avatar, err := get.GetAvatarById(avatarID_int)
 
 	if err != nil {
 		t.Error("Get avatar by id test failed")

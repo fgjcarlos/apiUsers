@@ -300,7 +300,7 @@ export default function Home(props) {
             href={`https://powerpeopleplatform.com/`}
             title='Power People User'
           >
-           -- power people platform --
+            -- power people platform --
           </a>
         </p>
       </div>
@@ -312,7 +312,7 @@ export default function Home(props) {
 
 export async function getStaticProps() {
   // Get external data from the file system, API, DB, etc.
-  let response = await fetch('http://192.168.1.135:3001/character/all')
+  let response = await fetch(`${serverHost}/character/all`)
 
   let characters = await response.json()
 

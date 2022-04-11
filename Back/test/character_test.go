@@ -29,7 +29,7 @@ func TestCreateCharacter(t *testing.T) {
 	listInterests = append(listInterests, "Reading")
 
 	avatar := u.Avatar{
-		ID:   oid,
+		ID:   CharacterID_int,
 		Name: "Avatar",
 		Url:  "/avatars/Sk8qSjpl5V-imgPost1.webp",
 	}

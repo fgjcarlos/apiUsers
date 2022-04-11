@@ -15,6 +15,7 @@ import { Avatar } from 'components/Avatar';
 // RESOURCES
 import AvatarDefault from 'public/avatarDefault.png'
 import { throwErrorToast, throwLoadingToast, throwSuccessToast } from 'utils/toast';
+import { serverHost } from 'utils/globalVars';
 
 export default function Addcharacter(props) {
 
@@ -46,7 +47,7 @@ export default function Addcharacter(props) {
 
     const handleSubmit = async (values, { setSubmitting }) => {
 
-        const urlServer = "http://192.168.1.135:3001/character/add";
+        const urlServer = `${serverHost}/character/add`
 
         const messageLoading = "Uploading data... Wait please."
         const messageOk = "The character has been added successfully."
@@ -312,7 +313,7 @@ export default function Addcharacter(props) {
 
 export async function getStaticProps() {
     // Get external data from the file system, API, DB, etc.
-    let response = await fetch('http://192.168.1.135:3001/avatar/all')
+    let response = await fetch(`${serverHost}/avatar/all`)
 
     let avatars = await response.json()
 

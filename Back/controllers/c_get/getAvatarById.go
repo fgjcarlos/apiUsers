@@ -2,6 +2,7 @@ package c_get
 
 import (
 	"apiBack/services/get"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +11,16 @@ func GetAvatarById(c *gin.Context) {
 
 	id := c.Param("id")
 
-	avatar, err := get.GetAvatarById(id)
+	id_int, errConvers := strconv.Atoi(id)
+
+	if errConvers != nil {
+		c.JSON(400, gin.H{
+			"message": "Fail to convert id",
+		})
+		return
+	}
+
+	avatar, err := get.GetAvatarById(id_int)
 
 	if err != nil {
 		// log.Panic(err)

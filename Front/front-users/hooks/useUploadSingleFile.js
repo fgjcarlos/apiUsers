@@ -1,8 +1,10 @@
 // DEPENDENCIES
 import { useState } from "react";
+// RESOURCES
+import { serverHost } from "utils/globalVars";
 
 export default function useUploadAvatar() {
-  const urlServer = "http://192.168.1.135:3001/upload";
+  const urlServer = `${serverHost}/avatar/add`
 
   const [file, setFile] = useState(null);
 

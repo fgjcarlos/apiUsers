@@ -15,9 +15,7 @@ var ctx = context.Background()
 
 func Create(Character u.Character) error {
 
-	var err error
-
-	_, err = collection.InsertOne(ctx, Character)
+	_, err := collection.InsertOne(ctx, Character)
 
 	if err != nil {
 		return err
@@ -98,7 +96,7 @@ func DeleteCharacter(CharacterID string) error {
 
 	var err error
 
-	oid, _ := primitive.ObjectIDFromHex(CharacterID)
+	oid, err := primitive.ObjectIDFromHex(CharacterID)
 
 	if err != nil {
 		return err

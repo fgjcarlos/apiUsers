@@ -5,7 +5,7 @@ import (
 	a "apiBack/db/models"
 )
 
-func GetAvatarById(avatarID string) (a.Avatar, error) {
+func GetAvatarById(avatarID int) (a.Avatar, error) {
 
 	avatar, err := dbController.ReadAvatarById(avatarID)
 

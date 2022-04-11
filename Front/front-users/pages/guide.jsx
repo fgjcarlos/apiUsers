@@ -31,10 +31,10 @@ export default function Guide() {
                 Output ⬇️
             </h2>
 
-            <div className='relative min-h-[160px] w-full sm:h-[300px] sm:w-[720px] self-center'>
+            <div className='relative min-h-[160px] w-full sm:h-[700px] sm:w-[720px] self-center'>
                 <Image
                     alt={'Get all the characters'}
-                    src={'/images/guide/get-characters.png'}
+                    src={'/images/guide/out-get-characters.png'}
                     objectFit="fill"
                     lazyBoundary="200px"
                     layout="fill"
@@ -62,10 +62,10 @@ export default function Guide() {
             </h2>
 
 
-            <div className='relative min-h-[160px] w-full sm:h-[300px] sm:w-[720px] self-center'>
+            <div className='relative min-h-[160px] w-full sm:h-[700px] sm:w-[720px] self-center'>
                 <Image
                     alt={'Get all the characters'}
-                    src={'/images/guide/get-characters.png'}
+                    src={'/images/guide/out-get-characters.png'}
                     objectFit="fill"
                     lazyBoundary="200px"
                     layout="fill"

@@ -26,13 +26,13 @@ func CreateAvatar(avatar a.Avatar) error {
 	return nil
 }
 
-func ReadAvatarById(avatarID string) (a.Avatar, error) {
+func ReadAvatarById(avatarID int) (a.Avatar, error) {
 
 	var avatar a.Avatar
 
-	oid, _ := primitive.ObjectIDFromHex(avatarID)
+	// oid, _ := primitive.ObjectIDFromHex(avatarID)
 
-	filter := bson.M{"_id": oid}
+	filter := bson.M{"_id": avatarID}
 
 	err := collectionAvatars.FindOne(ctxAvatars, filter).Decode(&avatar)
 
@@ -115,4 +115,18 @@ func DeleteAvatar(avatarID string) error {
 	}
 
 	return nil
+}
+
+// Get amount of Characters and sum 1 for ID
+func GenerateAavatarsID() (int, error) {
+
+	filter := bson.M{}
+
+	amountAvatars, err := collectionAvatars.CountDocuments(ctxAvatars, filter)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return int(amountAvatars) + 1, nil
 }
