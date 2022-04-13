@@ -61,7 +61,7 @@ export default function Register() {
 
                         const {users} = await response.json();
 
-                        if (users.find(user => user.name === values.name)) { 
+                        if (users && users.find(user => user.name === values.name)) { 
                             // if the name is already in the db
                             errors.name = "* The name is already in the db."
                         }
@@ -72,8 +72,6 @@ export default function Register() {
                     //     errors.password = "* Required"
                     // }
 
-
-                    Date.UTC()
                     return errors
                 }}
                 onSubmit={handleSubmit}

@@ -4,7 +4,6 @@ import (
 	"apiBack/db"
 	"apiBack/db/models"
 	"context"
-	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,9 +19,7 @@ var userCtx = context.Background()
 
 func CreateUser(user models.User) error {
 
-	userOut, err := userCollection.InsertOne(userCtx, user)
-
-	fmt.Println(userOut, err)
+	_, err := userCollection.InsertOne(userCtx, user)
 
 	if err != nil {
 		return err

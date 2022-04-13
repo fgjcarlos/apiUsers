@@ -3,6 +3,7 @@ package main
 import (
 	"apiBack/controllers/c_get"
 	"apiBack/controllers/c_post"
+	auth "apiBack/middelwares"
 
 	"fmt"
 	"log"
@@ -31,6 +32,19 @@ func main() {
 	r.Use(cors.Default())
 	r.SetTrustedProxies(nil)
 
+	// Instance of the auth middleware
+	mwAuth, errAuth := auth.Jwt()
+
+	if errAuth != nil {
+		log.Fatal("Instance mwAuth Error:" + errAuth.Error())
+	}
+
+	errInit := mwAuth.MiddlewareInit()
+
+	if errInit != nil {
+		log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
+	}
+
 	r.MaxMultipartMemory = 8 << 20 // 8 MiB
 
 	// Static files
@@ -49,19 +63,23 @@ func main() {
 		avatarGroup.POST("/add", c_post.AddAvatar)
 	}
 
-	// *Endpoint "CHARACTERS"
+	// *Endpoint "CHARACTER"
 	charactersGroup := r.Group("/character")
 	{
 		charactersGroup.GET("/all", c_get.GetAllCharacters)
 		charactersGroup.GET("/:id", c_get.GetCharacterById)
 		charactersGroup.POST("/add", c_post.AddCharacter)
+		charactersGroup.GET("/test", mwAuth.MiddlewareFunc(), homePage)
 	}
 
-	// *Endopint "USERS"
+	// *Endopint "USER"
 	usersGroup := r.Group("/user")
 	{
 		usersGroup.GET("/all", c_get.GetNamesUsers)
+		usersGroup.GET("/refresh_token", mwAuth.RefreshHandler)
+		usersGroup.GET("/test", mwAuth.MiddlewareFunc(), homePage)
 		usersGroup.POST("/register", c_post.RegisterUser)
+		usersGroup.POST("/login", mwAuth.LoginHandler)
 	}
 
 	r.GET("/", homePage)
