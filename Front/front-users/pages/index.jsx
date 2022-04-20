@@ -15,8 +15,20 @@ import { serverHost, serverStaticDir } from 'utils/globalVars';
 import Modal from 'components/Modal';
 import Button from 'components/Button';
 import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default function Home(props) {
+  // const dispatch = useDispatch();
+  // const login = useSelector((state) => state.login);
+
+  // if (typeof window !== "undefined") {
+  //   const   token = localStorage.getItem("token");
+      
+  //     if (!token && login) {
+  //         dispatch({ type: "logout" })
+  //     }
+  // }
+
 
   dayjs.extend(customParseFormat)
   const [characterSelected, setCharacterSelected] = useState(false);
@@ -311,10 +323,10 @@ export default function Home(props) {
 }
 
 export async function getStaticProps() {
-  // Get external data from the file system, API, DB, etc.
+  //Get external data from the file system, API, DB, etc.
   let response = await fetch(`${serverHost}/character/all`)
 
-  let characters = await response.json()
+  let characters = await response.json() 
 
   // The value of the `props` key will be
   //  passed to the `Home` component

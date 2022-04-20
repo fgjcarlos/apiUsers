@@ -2,6 +2,7 @@
 import Image from 'next/image';
 
 export default function Guide() {
+
     return (
         <div className='flex flex-col items-start justify-between p-8 sm:px-24'>
             <h1 className="mb-4 text-3xl font-bold">

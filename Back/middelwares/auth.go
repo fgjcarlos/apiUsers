@@ -10,7 +10,6 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -18,7 +17,7 @@ import (
 func Jwt() (*jwt.GinJWTMiddleware, error) {
 
 	var secretKey = os.Getenv("SECRET_KEY")
-	var identityKey string
+	var identityKey = "_id"
 
 	// # Create the JWT middleware
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
@@ -46,14 +45,8 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
 			var loginVals models.User
-
-			// TODO --> Validate the user
-
 			var userDB models.User
-			var userValidator validators.ValidateUser
 			var errPassword error
-
-			validator := validator.New()
 
 			// # Get data
 			err := c.BindJSON(&loginVals)
@@ -62,13 +55,8 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 				return "", jwt.ErrMissingLoginValues
 			}
 
-			userValidator = validators.ValidateUser{
-				Name:     loginVals.Name,
-				Password: loginVals.Password,
-			}
-
 			// # Validate data
-			err = validator.Struct(userValidator)
+			err = validators.ValidateUser(loginVals)
 
 			if err != nil {
 				return "", jwt.ErrMissingLoginValues

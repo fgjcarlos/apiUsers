@@ -54,11 +54,13 @@ func ReadCharacters() (u.Characters, error) {
 	}
 
 	for cur.Next(ctx) {
+
 		var Character u.Character
 		err = cur.Decode(&Character)
 
 		if err != nil {
-			return nil, err
+			break
+			// return nil, err
 		}
 
 		Characters = append(Characters, &Character)

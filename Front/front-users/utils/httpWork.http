@@ -1,0 +1,6 @@
+
+
+GET http://192.168.1.136:3001/user/info
+
+content-type: application/json
+Authorization: Bearer "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyIiOiI2MjU1NjkxMWM4YWVjMjU2MDk4YmVkM2EiLCJleHAiOjE2NTA2MjU3MzIsIm9yaWdfaWF0IjoxNjUwMzY2NTMyfQ.CkbMAacVRsGusedSpE0wjsnxv6LthGHsSvpoGLRUpF4"

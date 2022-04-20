@@ -3,15 +3,15 @@ package main
 import (
 	"apiBack/controllers/c_get"
 	"apiBack/controllers/c_post"
-	auth "apiBack/middelwares"
+	mw "apiBack/middelwares"
 
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/unrolled/secure"
 )
 
 func main() {
@@ -29,16 +29,20 @@ func main() {
 
 	r := gin.Default()
 
-	r.Use(cors.Default())
+	// r.Use(LoadTls())
+
+	// Register the middleware
+	r.Use(mw.CORSMiddleware())
 	r.SetTrustedProxies(nil)
 
 	// Instance of the auth middleware
-	mwAuth, errAuth := auth.Jwt()
+	mwAuth, errAuth := mw.Jwt()
 
 	if errAuth != nil {
 		log.Fatal("Instance mwAuth Error:" + errAuth.Error())
 	}
 
+	// Init middelware auth
 	errInit := mwAuth.MiddlewareInit()
 
 	if errInit != nil {
@@ -69,15 +73,14 @@ func main() {
 		charactersGroup.GET("/all", c_get.GetAllCharacters)
 		charactersGroup.GET("/:id", c_get.GetCharacterById)
 		charactersGroup.POST("/add", c_post.AddCharacter)
-		charactersGroup.GET("/test", mwAuth.MiddlewareFunc(), homePage)
 	}
 
 	// *Endopint "USER"
 	usersGroup := r.Group("/user")
 	{
+		usersGroup.GET("/info", mwAuth.MiddlewareFunc(), c_get.GetUserInfo)
 		usersGroup.GET("/all", c_get.GetNamesUsers)
 		usersGroup.GET("/refresh_token", mwAuth.RefreshHandler)
-		usersGroup.GET("/test", mwAuth.MiddlewareFunc(), homePage)
 		usersGroup.POST("/register", c_post.RegisterUser)
 		usersGroup.POST("/login", mwAuth.LoginHandler)
 	}
@@ -86,6 +89,7 @@ func main() {
 
 	// Start server
 	r.Run(fmt.Sprintf("%s:%s", HOST, PORT))
+	// r.RunTLS(fmt.Sprintf("%s:%s", HOST, PORT), "./192.168.1.136.pem", "./192.168.1.136-key.pem")
 }
 
 func homePage(c *gin.Context) {
@@ -93,4 +97,21 @@ func homePage(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Home Page",
 	})
+}
+
+func LoadTls() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		middleware := secure.New(secure.Options{
+			SSLRedirect: true,
+			SSLHost:     "192.168.1.136:3001",
+		})
+		err := middleware.Process(c.Writer, c.Request)
+		if err != nil {
+			//If an error occurs, do not continue.
+			fmt.Println(err)
+			return
+		}
+		//Continue processing
+		c.Next()
+	}
 }

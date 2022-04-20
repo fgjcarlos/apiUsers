@@ -1,3 +1,7 @@
 .env
 notas.txt
 /media
+localhost+2-key.pem
+localhost+2.pem
+192.168.1.136-key.pem
+192.168.1.136.pem

@@ -15,7 +15,7 @@ import (
 func RegisterUser(c *gin.Context) {
 
 	var newUser models.User
-	var userValidator validators.ValidateUser
+	var userValidator validators.ModelValidateUser
 	validator := validator.New()
 
 	// # Get data
@@ -29,7 +29,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	userValidator = validators.ValidateUser{
+	userValidator = validators.ModelValidateUser{
 		Name:     newUser.Name,
 		Password: newUser.Password,
 	}

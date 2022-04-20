@@ -1,13 +1,18 @@
 // DEPENDENCIES
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import Link from "next/link"
+import Image from 'next/image'
+import { shallowEqual, useSelector } from 'react-redux'
+import useCheckSession from 'hooks/useCheckSession'
 // RESOURCES
 import MenuHam from 'public/menuHamb.svg'
-import Image from 'next/image'
 
-export default function Navbar() {
-
+function Navbar() {
+    
     const [menuBtn, setMenuBtn] = useState(false)
+    const login = useSelector(state => state.login, shallowEqual);
+    
+    useCheckSession()
 
     const links = [
         {
@@ -50,14 +55,15 @@ export default function Navbar() {
                                 </a>
                             </Link>
                         )}
+
+                        {login && <div><h1>{login.name}</h1></div>}
                     </nav>
                 </div>
-
-
-
 
             </div>
         </div>
 
     )
 }
+
+export default memo(Navbar)

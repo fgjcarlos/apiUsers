@@ -45,6 +45,24 @@ func ReadUser(userIn models.User) (models.User, error) {
 
 }
 
+func ReadUserById(UserID string) (models.User, error) {
+
+	var user models.User
+
+	oid, _ := primitive.ObjectIDFromHex(UserID)
+
+	filter := bson.M{"_id": oid}
+
+	err := userCollection.FindOne(userCtx, filter).Decode(&user)
+
+	if err != nil {
+		return user, err
+	}
+
+	return user, err
+
+}
+
 func UpdateUser(user models.User, userID string) error {
 
 	oid, _ := primitive.ObjectIDFromHex(userID)

@@ -61,7 +61,8 @@ func ReadAvatars() (a.Avatars, error) {
 		err = cur.Decode(&avatar)
 
 		if err != nil {
-			return nil, err
+			break
+			// return nil, err
 		}
 
 		avatars = append(avatars, &avatar)
