@@ -1,12 +1,8 @@
 // COMPONENTS
-import useCheckSession from "hooks/useCheckSession";
-import useCheckToken from "hooks/useToken";
 import Footer from "./Footer";
 import Navbar from "./NavBar";
 
 export default function MainLayout({ children }) {
-
-    //useCheckSession()
 
     return (
         <div className="bg-[#f5f5f5] min-h-screen flex flex-col justify-between">

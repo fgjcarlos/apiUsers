@@ -3,6 +3,7 @@ import { ErrorMessage } from "formik";
 import { Formik } from "formik";
 import { Field } from "formik";
 import { Form } from "formik";
+import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { Toaster } from "react-hot-toast";
 import { serverHost } from "utils/globalVars";
@@ -12,6 +13,7 @@ export default function Register() {
 
     const urlServer = `${serverHost}/user/register`;
     const urlNamesUser = `${serverHost}/user/all`;
+    const router = useRouter()
 
     const messageLoading = "Uploading data... Wait please."
     const messageOk = "The character has been added successfully."
@@ -21,7 +23,6 @@ export default function Register() {
 
     const handleSubmit = async (values, { setSubmitting }) => {
 
-        console.log(values);
 
         const toastLoading = throwLoadingToast(messageLoading)
 
@@ -40,6 +41,10 @@ export default function Register() {
         response.ok
             ? throwSuccessToast(messageOk, duration)
             : throwErrorToast(messageError, duration)
+
+        if(response.ok){
+            router.push("/")
+        }
 
     }
 
