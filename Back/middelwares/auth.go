@@ -5,7 +5,6 @@ import (
 	"apiBack/services/get"
 	"apiBack/validators"
 	"os"
-	"strings"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -73,6 +72,7 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 			if (userDB == models.User{}) {
 				errPassword = nil
 			} else {
+
 				errPassword = bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(loginVals.Password))
 			}
 
@@ -91,7 +91,10 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 			v, ok := data.(*models.User)
 
 			// ** If url path user, rol user and ok,  return true, also check key user
-			if ok && (strings.Split(c.Request.URL.Path, "/")[1]) == "user" {
+
+			// && (strings.Split(c.Request.URL.Path, "/")[1]) == "user"
+
+			if ok {
 				return true
 			}
 

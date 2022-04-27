@@ -4,31 +4,21 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Pagination, Navigation } from "swiper";
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useDispatch, useSelector } from 'react-redux';
 // CSS
 import 'swiper/css';
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import Image from 'next/image';
 // RESOURCES
 import { serverHost, serverStaticDir } from 'utils/globalVars';
 // COMPONENTS
 import Modal from 'components/Modal';
 import Button from 'components/Button';
-import Link from 'next/link';
-import { useDispatch, useSelector } from 'react-redux';
+
 
 export default function Home(props) {
-  // const dispatch = useDispatch();
-  // const login = useSelector((state) => state.login);
-
-  // if (typeof window !== "undefined") {
-  //   const   token = localStorage.getItem("token");
-      
-  //     if (!token && login) {
-  //         dispatch({ type: "logout" })
-  //     }
-  // }
-
 
   dayjs.extend(customParseFormat)
   const [characterSelected, setCharacterSelected] = useState(false);

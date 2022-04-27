@@ -5,6 +5,7 @@ import (
 	"apiBack/services/post"
 	"apiBack/validators"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	gonanoid "github.com/matoous/go-nanoid/v2"
@@ -64,6 +65,8 @@ func RegisterUser(c *gin.Context) {
 	newUser.Password = string(hashedPassword)
 	newUser.Key = key
 	newUser.QuantityCharacters = 0
+	newUser.CreatedAt = time.Now()
+	newUser.UpdatedAt = time.Now()
 
 	// # Add user
 	err = post.AddUser(newUser)

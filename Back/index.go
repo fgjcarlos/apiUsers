@@ -1,14 +1,17 @@
 package main
 
 import (
+	"apiBack/controllers/c_delete"
 	"apiBack/controllers/c_get"
 	"apiBack/controllers/c_post"
+	"apiBack/db/models"
 	mw "apiBack/middelwares"
 
 	"fmt"
 	"log"
 	"os"
 
+	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/unrolled/secure"
@@ -72,17 +75,19 @@ func main() {
 	{
 		charactersGroup.GET("/all", c_get.GetAllCharacters)
 		charactersGroup.GET("/:id", c_get.GetCharacterById)
-		charactersGroup.POST("/add", c_post.AddCharacter)
+		charactersGroup.POST("/add", mwAuth.MiddlewareFunc(), c_post.AddCharacter)
 	}
 
 	// *Endopint "USER"
 	usersGroup := r.Group("/user")
 	{
+		usersGroup.GET("/characters/:user", mwAuth.MiddlewareFunc(), c_get.GetCharactersByUser)
 		usersGroup.GET("/info", mwAuth.MiddlewareFunc(), c_get.GetUserInfo)
 		usersGroup.GET("/all", c_get.GetNamesUsers)
 		usersGroup.GET("/refresh_token", mwAuth.RefreshHandler)
 		usersGroup.POST("/register", c_post.RegisterUser)
 		usersGroup.POST("/login", mwAuth.LoginHandler)
+		usersGroup.DELETE("/character/:id", mwAuth.MiddlewareFunc(), c_delete.DeleteCharacter)
 	}
 
 	r.GET("/", homePage)
@@ -114,4 +119,14 @@ func LoadTls() gin.HandlerFunc {
 		//Continue processing
 		c.Next()
 	}
+}
+
+func helloHandler(c *gin.Context) {
+	claims := jwt.ExtractClaims(c)
+	user, _ := c.Get("_id")
+	c.JSON(200, gin.H{
+		"userID":   claims["_id"],
+		"userName": user.(*models.User).Name,
+		"text":     "Hello World.",
+	})
 }

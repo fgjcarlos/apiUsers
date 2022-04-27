@@ -87,6 +87,26 @@ func UpdateUser(user models.User, userID string) error {
 
 }
 
+func FindUserAndUpdateQuantityCharacters(userID string) (models.User, error) {
+
+	var user models.User
+
+	oid, _ := primitive.ObjectIDFromHex(userID)
+
+	filter := bson.M{"_id": oid}
+
+	update := bson.M{"$inc": bson.M{"quantitycharacters": 1}}
+
+	err := userCollection.FindOneAndUpdate(userCtx, filter, update).Decode(&user)
+
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+
+}
+
 func DeleteUser(userID string) error {
 
 	oid, err := primitive.ObjectIDFromHex(userID)

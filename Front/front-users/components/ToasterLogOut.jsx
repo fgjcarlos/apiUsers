@@ -1,11 +1,13 @@
+import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux'
 
 
 export default function ToasterLogout({ t }) {
-   
-    const dispatch = useDispatch();
 
+    const dispatch = useDispatch();
+    const router = useRouter();
+    
     const handleLogOut = (t) => {
         console.log("LogOut");
 
@@ -14,6 +16,8 @@ export default function ToasterLogout({ t }) {
         setTimeout(() => {
             dispatch({ type: "logout", payload: null })
             localStorage.removeItem("token")
+            router.push("/");
+
         }, 500);
     }
 
@@ -26,7 +30,7 @@ export default function ToasterLogout({ t }) {
                 <div className="flex-1 w-0 p-4">
                     <div className="flex items-start">
                         <div className="flex-1 ml-3">
-          
+
                             <p className="mt-1 text-base text-white">
                                 Do you want to log out?
                             </p>

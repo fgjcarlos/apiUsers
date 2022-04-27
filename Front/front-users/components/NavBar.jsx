@@ -33,10 +33,6 @@ function Navbar() {
             name: "Guide",
         },
         {
-            endPoint: "/addcharacter",
-            name: "Add Character",
-        },
-        {
             endPoint: "/uploadAvatar",
             name: "Upload Avatar",
         },

@@ -4,6 +4,8 @@ import (
 	"apiBack/db"
 	u "apiBack/db/models"
 	"context"
+	"strconv"
+	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -22,6 +24,35 @@ func Create(Character u.Character) error {
 	}
 
 	return nil
+}
+
+func ReadCharacterByUser(user string) (u.Characters, error) {
+
+	var characters u.Characters
+
+	filter := bson.M{"created_by": strings.ToLower(user)}
+
+	cur, err := collection.Find(ctx, filter)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for cur.Next(ctx) {
+		var character u.Character
+		err = cur.Decode(&character)
+
+		if err != nil {
+			break
+			// return nil, err
+		}
+
+		characters = append(characters, &character)
+
+	}
+
+	return characters, nil
+
 }
 
 func ReadCharacterById(CharacterId int) (u.Character, error) {
@@ -98,7 +129,7 @@ func DeleteCharacter(CharacterID string) error {
 
 	var err error
 
-	oid, err := primitive.ObjectIDFromHex(CharacterID)
+	oid, err := strconv.Atoi(CharacterID)
 
 	if err != nil {
 		return err

@@ -16,11 +16,13 @@ import { Avatar } from 'components/Avatar';
 import AvatarDefault from 'public/avatarDefault.png'
 import { throwErrorToast, throwLoadingToast, throwSuccessToast } from 'utils/toast';
 import { serverHost } from 'utils/globalVars';
+import { useRouter } from 'next/router';
 
 export default function Addcharacter(props) {
 
     const { avatars } = props
     const formRef = useRef();
+    const router = useRouter()
 
     const [showModalChooseAvatar, setShowModalChooseAvatar] = useState(false)
     const [showModalChooseBgAvatar, setShowModalChooseBgAvatar] = useState(false)
@@ -29,6 +31,7 @@ export default function Addcharacter(props) {
 
     const dispatch = useDispatch();
     const storeAvatar = useSelector((s) => s.avatar);
+    const user = useSelector((s) => s.login);
 
     const handleSetChooseAvatar = (e) => {
         e.preventDefault()
@@ -54,18 +57,17 @@ export default function Addcharacter(props) {
         const messageError = "An error has occurred."
         const duration = 10000
 
-        // e.preventDefault()
-
-        // TODO -> Created_by and time to utc
         dayjs.extend(utc)
-        const character = { ...values, avatar: storeAvatar, Created_by: "admin", birthday: dayjs(values.birthday).format() }
+        const character = { ...values, avatar: storeAvatar, Created_by: user.name, birthday: dayjs(values.birthday).format() }
 
-        console.log('character', character)  // TODO -> Remove
-        console.log(dayjs(values.birthday).format())  // TODO -> Remove);
         const toastLoading = throwLoadingToast(messageLoading)
 
         const response = await fetch(urlServer, {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
             body: JSON.stringify({ ...character }),
         });
 
@@ -76,10 +78,10 @@ export default function Addcharacter(props) {
             : throwErrorToast(messageError, duration)
 
         // *Reset form and avatar
-        /// TODO -> reset created_by, 
         response.ok && setTimeout(() => {
             formRef.current.reset()
             dispatch({ type: "@avatar/reset" })
+            router.push("/profile")
         }, 2000);
     }
 
