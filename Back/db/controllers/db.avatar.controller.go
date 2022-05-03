@@ -4,7 +4,6 @@ import (
 	"apiBack/db"
 	a "apiBack/db/models"
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -26,13 +25,9 @@ func CreateAvatar(avatar a.Avatar) error {
 	return nil
 }
 
-func ReadAvatarById(avatarID int) (a.Avatar, error) {
+func ReadAvatar(filter primitive.M) (a.Avatar, error) {
 
 	var avatar a.Avatar
-
-	// oid, _ := primitive.ObjectIDFromHex(avatarID)
-
-	filter := bson.M{"_id": avatarID}
 
 	err := collectionAvatars.FindOne(ctxAvatars, filter).Decode(&avatar)
 
@@ -44,11 +39,9 @@ func ReadAvatarById(avatarID int) (a.Avatar, error) {
 
 }
 
-func ReadAvatars() (a.Avatars, error) {
+func ReadAvatars(filter primitive.M) (a.Avatars, error) {
 
 	var avatars a.Avatars
-
-	filter := bson.D{}
 
 	cur, err := collectionAvatars.Find(ctxAvatars, filter)
 
@@ -72,21 +65,9 @@ func ReadAvatars() (a.Avatars, error) {
 	return avatars, nil
 }
 
-func UpdateAvatar(avatar a.Avatar, CharacterID string) error {
+func UpdateAvatar(filter primitive.M, update primitive.M) error {
+
 	var err error
-
-	oid, _ := primitive.ObjectIDFromHex(CharacterID)
-
-	filter := bson.M{"_id": oid}
-
-	update := bson.M{
-		"$set": bson.M{
-			"name":       avatar.Name,
-			"url":        avatar.Url,
-			"style":      avatar.Style,
-			"updated_at": time.Now(),
-		},
-	}
 
 	_, err = collectionAvatars.UpdateOne(ctxAvatars, filter, update)
 
@@ -97,17 +78,9 @@ func UpdateAvatar(avatar a.Avatar, CharacterID string) error {
 	return nil
 }
 
-func DeleteAvatar(avatarID string) error {
+func DeleteAvatar(filter primitive.M) error {
 
 	var err error
-
-	oid, _ := primitive.ObjectIDFromHex(avatarID)
-
-	if err != nil {
-		return err
-	}
-
-	filter := bson.M{"_id": oid}
 
 	_, err = collectionAvatars.DeleteOne(ctxAvatars, filter)
 

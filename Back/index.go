@@ -75,13 +75,14 @@ func main() {
 	{
 		charactersGroup.GET("/all", c_get.GetAllCharacters)
 		charactersGroup.GET("/:id", c_get.GetCharacterById)
+		// TODO -> Add mw for max. quantity of characters <= 3
 		charactersGroup.POST("/add", mwAuth.MiddlewareFunc(), c_post.AddCharacter)
 	}
 
 	// *Endopint "USER"
 	usersGroup := r.Group("/user")
 	{
-		usersGroup.GET("/characters/:user", mwAuth.MiddlewareFunc(), c_get.GetCharactersByUser)
+		usersGroup.GET("/characters/:id", mwAuth.MiddlewareFunc(), c_get.GetCharactersByUser)
 		usersGroup.GET("/info", mwAuth.MiddlewareFunc(), c_get.GetUserInfo)
 		usersGroup.GET("/all", c_get.GetNamesUsers)
 		usersGroup.GET("/refresh_token", mwAuth.RefreshHandler)

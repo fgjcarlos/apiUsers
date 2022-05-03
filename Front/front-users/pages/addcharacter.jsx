@@ -58,7 +58,15 @@ export default function Addcharacter(props) {
         const duration = 10000
 
         dayjs.extend(utc)
-        const character = { ...values, avatar: storeAvatar, Created_by: user.name, birthday: dayjs(values.birthday).format() }
+        const character = {
+            ...values,
+            avatar: storeAvatar,
+            Created_by: {
+                name: user.name,
+                id: user.id
+            },
+            birthday: dayjs(values.birthday).format()
+        }
 
         const toastLoading = throwLoadingToast(messageLoading)
 

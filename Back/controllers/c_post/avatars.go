@@ -14,7 +14,6 @@ import (
 func AddAvatar(c *gin.Context) {
 
 	var newFileName string
-	var urlDir string
 
 	// # Get data
 	var dir = c.PostForm("dir")
@@ -104,7 +103,6 @@ func AddAvatar(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message": message,
-		"urlDir":  urlDir,
 	})
 
 }

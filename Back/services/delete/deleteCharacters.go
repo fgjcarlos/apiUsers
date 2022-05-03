@@ -1,10 +1,25 @@
 package delete
 
-import dbController "apiBack/db/controllers"
+import (
+	dbController "apiBack/db/controllers"
+	"strconv"
 
-func DeleteCharacter(CharacterID string) error {
+	"go.mongodb.org/mongo-driver/bson"
+)
 
-	err := dbController.DeleteCharacter(CharacterID)
+func DeleteCharacterById(CharacterID string) error {
+
+	var err error
+
+	oid, err := strconv.Atoi(CharacterID)
+
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": oid}
+
+	err = dbController.DeleteCharacter(filter)
 
 	if err != nil {
 		return err

@@ -5,7 +5,6 @@ import (
 	"apiBack/services/delete"
 	"apiBack/services/get"
 	"apiBack/services/post"
-	"apiBack/services/update"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -52,27 +51,27 @@ func TestReadUser(t *testing.T) {
 
 }
 
-func TestUpdateUser(t *testing.T) {
+// func TestUpdateUser(t *testing.T) {
 
-	oid := userID.Hex()
+// 	oid := userID.Hex()
 
-	user := models.User{
-		Name:               "JositoTonio",
-		Password:           "123456",
-		Key:                "123456",
-		QuantityCharacters: 2,
-	}
+// 	user := models.User{
+// 		Name:               "JositoTonio",
+// 		Password:           "123456",
+// 		Key:                "123456",
+// 		QuantityCharacters: 2,
+// 	}
 
-	err := update.UpdateUser(user, oid)
+// 	err := update.UpdateUser(user, oid)
 
-	if err != nil {
-		t.Error("Update user test failed")
-		t.Fail()
-	} else {
-		t.Log("The test finished successfully")
-	}
+// 	if err != nil {
+// 		t.Error("Update user test failed")
+// 		t.Fail()
+// 	} else {
+// 		t.Log("The test finished successfully")
+// 	}
 
-}
+// }
 
 func TestDeleteUser(t *testing.T) {
 

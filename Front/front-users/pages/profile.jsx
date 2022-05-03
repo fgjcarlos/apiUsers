@@ -11,6 +11,10 @@ import { useEffect, useState } from "react";
 import useIsMounted from 'hooks/useIsMounted';
 import Button from "components/Button";
 import { serverHost, serverStaticDir } from "utils/globalVars";
+import ModalConfirm from "components/ModalConfirm";
+import { Toaster } from "react-hot-toast";
+import {throwSuccessToast} from "utils/toast"
+import ModalViewAvatar from "components/ModalViewAvatar";
 
 export default function Profile({ userData }) {
 
@@ -21,12 +25,22 @@ export default function Profile({ userData }) {
     const dispatch = useDispatch();
     const [spinner, setSpinner] = useState(false)
     const [updateUser, setUpdateUser] = useState(false)
+    const [characterSelected, setCharacterSelected] = useState(null)
+    const [modalViewAvatar, setModalViewAvatar] = useState(false)
+
+    const [modal, setShowModal] = useState(false)
+    const titleModal = "Are you sure to modify the character?"
+
+    console.log("modal", modal)
 
     dayjs.extend(customParseFormat)
 
     charactersUsers && console.log("sf", charactersUsers[0]?.style?.backgroundColor);
 
     const handleModifyCharacter = () => {
+        const {character} = characterSelected
+        console.log(character.id);
+        // setShowModal(true)
 
     }
 
@@ -35,11 +49,6 @@ export default function Profile({ userData }) {
     }
 
     const handleDeleteCharacter = async (id) => {
-        console.log("character id", id)
-
-        console.log("path", `${serverHost}/user/character/${id}`);
-
-        console.log("token", localStorage.getItem("token"));
 
         let response = await fetch(`${serverHost}/user/character/${id}`, {
             method: "DELETE",
@@ -50,10 +59,27 @@ export default function Profile({ userData }) {
         })
 
         if (response.status === 200) {
-            window.alert("Character deleted")
-            setUpdateUser(!updateUser)
+            throwSuccessToast("Character deleted successfully", 2000)
+            setUpdateUser(true)
+            setShowModal(false)
         }
 
+    }
+
+    const handleOperationsCharacter = () => {
+
+        const {character} = characterSelected
+
+        switch (characterSelected.action) {
+            case "modify":
+                handleModifyCharacter(character.id)
+                break;
+            case "delete":
+                handleDeleteCharacter(character.id)
+                break;
+            default:
+                break;
+        }
     }
 
     useEffect(() => {
@@ -65,7 +91,7 @@ export default function Profile({ userData }) {
 
             setSpinner(true)
 
-            let response = await fetch(`${serverHost}/user/characters/${userLogin.name}`, {
+            let response = await fetch(`${serverHost}/user/characters/${userLogin.id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -102,7 +128,7 @@ export default function Profile({ userData }) {
 
         return () => isSubscribed = false;
 
-    }, [updateUser]) // eslint-disable-line react-hooks/exhaustive-deps
+    }, [updateUser, router]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
     if (!loaded) return "Loading..."
@@ -111,6 +137,7 @@ export default function Profile({ userData }) {
 
     return (
         <div className='lg:w-[80%] box-content mx-auto p-4'>
+            <Toaster />
             <div className=" box-content h-[270px] lg:h-[380px] mx-auto p-4">
                 <div className="h-[180px]  lg:h-[250px] relative">
                     <Image
@@ -154,6 +181,7 @@ export default function Profile({ userData }) {
                                 >
                                     <span className="self-start p-2 font-light text-">{character?.name}</span>
 
+
                                     <div
                                         style={(character?.avatar?.style?.backgroundColor === "") ? { backgroundColor: "inherit" } : character?.avatar.style}
                                         className="relative w-[180px] h-[230px] rounded-md mb-2 shadow-md"
@@ -167,9 +195,15 @@ export default function Profile({ userData }) {
                                         />
                                     </div>
                                     <div className="p-2 flex justify-center items-center gap-2 flex-wrap rounded-t-[10%] transition-height duration-300 animate-appear-below opacity-0 group-hover:opacity-100 group-hover:h-[40%]  w-full h-[0%] absolute bottom-0 left-0 bg-amber-200 border-t-2 border-neutral-900">
-                                        <div onClick={() => handleDeleteCharacter(character.id)} className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🚫 Delete</div>
-                                        <div className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">⚙️ Modify</div>
-                                        <div className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🖥️ View</div>
+                                        <div
+                                            onClick={() => { setShowModal(true); setCharacterSelected({ character, action: "delete" }) }}
+                                            className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🚫 Delete</div>
+                                        <div 
+                                        onClick={() => {setShowModal(true); setCharacterSelected({ character, action: "modify" }) }} 
+                                        className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">⚙️ Modify</div>
+                                        <div 
+                                        onClick={() => {setModalViewAvatar(true); setCharacterSelected({ character, action: "" }) }}
+                                        className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🖥️ View</div>
                                     </div>
 
                                 </div>
@@ -186,6 +220,15 @@ export default function Profile({ userData }) {
                 &&
                 <Button onClick={() => router.push("/addcharacter")}>Add character</Button>
 
+            }
+
+            {
+                modal &&
+                <ModalConfirm title={titleModal} onConfirm={handleOperationsCharacter} onCancel={() => setShowModal(false)} />
+            }
+
+            {
+                modalViewAvatar && characterSelected && <ModalViewAvatar onExit={()=> setModalViewAvatar(false)} character={characterSelected.character} />
             }
 
         </div>

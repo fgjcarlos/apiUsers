@@ -2,22 +2,20 @@ package db
 
 import (
 	"apiBack/db"
+	"apiBack/db/models"
 	u "apiBack/db/models"
 	"context"
-	"strconv"
-	"strings"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var collection = db.GetCollection("characters")
-var ctx = context.Background()
+var collectionCharacters = db.GetCollection("characters")
+var ctxCharacter = context.Background()
 
-func Create(Character u.Character) error {
+func Create(Character models.Character) error {
 
-	_, err := collection.InsertOne(ctx, Character)
+	_, err := collectionCharacters.InsertOne(ctxCharacter, Character)
 
 	if err != nil {
 		return err
@@ -26,44 +24,11 @@ func Create(Character u.Character) error {
 	return nil
 }
 
-func ReadCharacterByUser(user string) (u.Characters, error) {
-
-	var characters u.Characters
-
-	filter := bson.M{"created_by": strings.ToLower(user)}
-
-	cur, err := collection.Find(ctx, filter)
-
-	if err != nil {
-		return nil, err
-	}
-
-	for cur.Next(ctx) {
-		var character u.Character
-		err = cur.Decode(&character)
-
-		if err != nil {
-			break
-			// return nil, err
-		}
-
-		characters = append(characters, &character)
-
-	}
-
-	return characters, nil
-
-}
-
-func ReadCharacterById(CharacterId int) (u.Character, error) {
+func ReadCharacter(filter primitive.M) (models.Character, error) {
 
 	var Character u.Character
 
-	// oid, _ := primitive.ObjectIDFromHex(CharacterId)
-
-	filter := bson.M{"_id": CharacterId}
-
-	err := collection.FindOne(ctx, filter).Decode(&Character)
+	err := collectionCharacters.FindOne(ctxCharacter, filter).Decode(&Character)
 
 	if err != nil {
 		return Character, err
@@ -72,25 +37,25 @@ func ReadCharacterById(CharacterId int) (u.Character, error) {
 	return Character, err
 }
 
-func ReadCharacters() (u.Characters, error) {
+func ReadCharacters(filter primitive.M) (models.Characters, error) {
 
 	var Characters u.Characters
 
-	filter := bson.D{}
-
-	cur, err := collection.Find(ctx, filter)
+	cur, err := collectionCharacters.Find(ctxCharacter, filter)
 
 	if err != nil {
 		return nil, err
 	}
 
-	for cur.Next(ctx) {
+	for cur.Next(ctxCharacter) {
 
 		var Character u.Character
 		err = cur.Decode(&Character)
 
 		if err != nil {
-			break
+
+			// TODO -> continue or break? see, change props of characters...
+			// continue
 			// return nil, err
 		}
 
@@ -101,22 +66,10 @@ func ReadCharacters() (u.Characters, error) {
 	return Characters, nil
 }
 
-func UpdateCharacter(Character u.Character, CharacterID string) error {
+func UpdateCharacter(filter primitive.M, update primitive.M) error {
 	var err error
 
-	oid, _ := primitive.ObjectIDFromHex(CharacterID)
-
-	filter := bson.M{"_id": oid}
-
-	update := bson.M{
-		"$set": bson.M{
-			"name":       Character.Name,
-			"profession": Character.Profession,
-			"updated_at": time.Now(),
-		},
-	}
-
-	_, err = collection.UpdateOne(ctx, filter, update)
+	_, err = collectionCharacters.UpdateOne(ctxCharacter, filter, update)
 
 	if err != nil {
 		return err
@@ -125,19 +78,9 @@ func UpdateCharacter(Character u.Character, CharacterID string) error {
 	return nil
 }
 
-func DeleteCharacter(CharacterID string) error {
+func DeleteCharacter(filter primitive.M) error {
 
-	var err error
-
-	oid, err := strconv.Atoi(CharacterID)
-
-	if err != nil {
-		return err
-	}
-
-	filter := bson.M{"_id": oid}
-
-	_, err = collection.DeleteOne(ctx, filter)
+	_, err := collectionCharacters.DeleteOne(ctxCharacter, filter)
 
 	if err != nil {
 		return err
@@ -151,7 +94,7 @@ func GenerateCharacterID() (int, error) {
 
 	filter := bson.M{}
 
-	amountCharacters, err := collection.CountDocuments(ctx, filter)
+	amountCharacters, err := collectionCharacters.CountDocuments(ctxCharacter, filter)
 
 	if err != nil {
 		return 0, err

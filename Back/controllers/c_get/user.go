@@ -25,7 +25,7 @@ func GetUserInfo(c *gin.Context) {
 	var userInfo models.User
 	var err error
 
-	id := get.ExtractClaims(c)
+	id := get.ExtractClaimsID(c)
 
 	userInfo, err = get.GetUserById(id)
 

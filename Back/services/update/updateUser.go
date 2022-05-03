@@ -3,11 +3,25 @@ package update
 import (
 	dbController "apiBack/db/controllers"
 	"apiBack/db/models"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func UpdateUser(user models.User, userID string) error {
+func UpdateUser(user models.User) error {
 
-	err := dbController.UpdateUser(user, userID)
+	filter := bson.M{"_id": user.ID}
+
+	update := bson.M{"$set": bson.M{
+		"name":       user.Name,
+		"password":   user.Password,
+		"key":        user.Key,
+		"quantity":   user.QuantityCharacters,
+		"updated_at": time.Now(),
+	}}
+
+	err := dbController.UpdateUser(filter, update)
 
 	if err != nil {
 		return err
@@ -16,12 +30,18 @@ func UpdateUser(user models.User, userID string) error {
 	return nil
 }
 
-func FindUserAndUpdateQuantityCharacters(userID string) (models.User, error) {
+func UserUpdateQuantityCharacters(userID string, quantity int) (models.User, error) {
 
 	var user models.User
 	var err error
 
-	user, err = dbController.FindUserAndUpdateQuantityCharacters(userID)
+	oid, _ := primitive.ObjectIDFromHex(userID)
+
+	filter := bson.M{"_id": oid}
+
+	update := bson.M{"$inc": bson.M{"quantitycharacters": quantity}}
+
+	user, err = dbController.FindUserAndUpdate(filter, update)
 
 	if err != nil {
 		return user, err

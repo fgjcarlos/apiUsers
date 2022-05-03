@@ -1,10 +1,25 @@
 package delete
 
-import dbController "apiBack/db/controllers"
+import (
+	dbController "apiBack/db/controllers"
 
-func DeleteAvatar(avatarID string) error {
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
-	err := dbController.DeleteAvatar(avatarID)
+func DeleteAvatarByID(avatarID string) error {
+
+	var err error
+
+	oid, _ := primitive.ObjectIDFromHex(avatarID)
+
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": oid}
+
+	err = dbController.DeleteAvatar(filter)
 
 	if err != nil {
 		return err

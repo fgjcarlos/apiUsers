@@ -27,6 +27,8 @@ export default function Home(props) {
 
   const { characters } = props
 
+  console.log({characters});
+
   return (
     <>
       <div className="relative bg-bgHeroHome2 after:absolute after:inset-0 after:z-[11] after:block after:w-full after:h-full  after:bg-[#303030] after:bg-opacity-60  bg-cover h-full  lg:h-[50vh] flex justify-center items-center  text-white  ">

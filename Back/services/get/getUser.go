@@ -6,9 +6,12 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func ExtractClaims(c *gin.Context) string {
+func ExtractClaimsID(c *gin.Context) string {
 
 	claims := jwt.ExtractClaims(c)
 
@@ -19,7 +22,9 @@ func ExtractClaims(c *gin.Context) string {
 
 func GetUser(userIn models.User) (models.User, error) {
 
-	user, err := dbController.ReadUser(userIn)
+	filter := bson.M{"name": userIn.Name}
+
+	user, err := dbController.ReadUser(filter)
 
 	if err != nil {
 		return user, err
@@ -31,11 +36,30 @@ func GetUser(userIn models.User) (models.User, error) {
 
 func GetUserById(UserID string) (models.User, error) {
 
-	user, err := dbController.ReadUserById(UserID)
+	oid, _ := primitive.ObjectIDFromHex(UserID)
+
+	filter := bson.M{"_id": oid}
+
+	user, err := dbController.ReadUser(filter)
 
 	if err != nil {
 		return user, err
 	}
 
 	return user, nil
+}
+
+func GetNamesUsers() ([]models.UserName, error) {
+
+	filter := bson.M{}
+	options := options.Find().SetProjection(bson.M{"name": 1, "_id": 0})
+
+	users, err := dbController.ReadUsers(filter, options)
+
+	if err != nil {
+		return users, err
+	}
+
+	return users, nil
+
 }

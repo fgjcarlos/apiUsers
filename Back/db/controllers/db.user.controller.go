@@ -4,9 +4,7 @@ import (
 	"apiBack/db"
 	"apiBack/db/models"
 	"context"
-	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -29,11 +27,9 @@ func CreateUser(user models.User) error {
 
 }
 
-func ReadUser(userIn models.User) (models.User, error) {
+func ReadUser(filter primitive.M) (models.User, error) {
 
 	var userOut models.User
-
-	filter := bson.M{"name": userIn.Name}
 
 	err := userCollection.FindOne(userCtx, filter).Decode(&userOut)
 
@@ -45,37 +41,7 @@ func ReadUser(userIn models.User) (models.User, error) {
 
 }
 
-func ReadUserById(UserID string) (models.User, error) {
-
-	var user models.User
-
-	oid, _ := primitive.ObjectIDFromHex(UserID)
-
-	filter := bson.M{"_id": oid}
-
-	err := userCollection.FindOne(userCtx, filter).Decode(&user)
-
-	if err != nil {
-		return user, err
-	}
-
-	return user, err
-
-}
-
-func UpdateUser(user models.User, userID string) error {
-
-	oid, _ := primitive.ObjectIDFromHex(userID)
-
-	filter := bson.M{"_id": oid}
-
-	update := bson.M{"$set": bson.M{
-		"name":       user.Name,
-		"password":   user.Password,
-		"key":        user.Key,
-		"quantity":   user.QuantityCharacters,
-		"updated_at": time.Now(),
-	}}
+func UpdateUser(filter primitive.M, update primitive.M) error {
 
 	_, err := userCollection.UpdateOne(userCtx, filter, update)
 
@@ -87,15 +53,9 @@ func UpdateUser(user models.User, userID string) error {
 
 }
 
-func FindUserAndUpdateQuantityCharacters(userID string) (models.User, error) {
+func FindUserAndUpdate(filter primitive.M, update primitive.M) (models.User, error) {
 
 	var user models.User
-
-	oid, _ := primitive.ObjectIDFromHex(userID)
-
-	filter := bson.M{"_id": oid}
-
-	update := bson.M{"$inc": bson.M{"quantitycharacters": 1}}
 
 	err := userCollection.FindOneAndUpdate(userCtx, filter, update).Decode(&user)
 
@@ -107,34 +67,23 @@ func FindUserAndUpdateQuantityCharacters(userID string) (models.User, error) {
 
 }
 
-func DeleteUser(userID string) error {
+func DeleteUser(filter primitive.M) error {
 
-	oid, err := primitive.ObjectIDFromHex(userID)
-
-	if err != nil {
-		return err
-	}
-
-	filter := bson.M{"_id": oid}
-
-	_, err = userCollection.DeleteOne(userCtx, filter)
+	_, err := userCollection.DeleteOne(userCtx, filter)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
-func ReadNamesUsers() ([]models.UserName, error) {
+func ReadUsers(filter primitive.M, options *options.FindOptions) ([]models.UserName, error) {
 
 	var names []models.UserName
 	var name models.UserName
 
-	filter := bson.D{}
-
-	namesUser, err := userCollection.Find(userCtx, filter, options.Find().SetProjection(bson.M{"name": 1, "_id": 0}))
+	namesUser, err := userCollection.Find(userCtx, filter, options)
 
 	if err != nil {
 		return names, err

@@ -4,7 +4,7 @@ import (
 	db "apiBack/db/controllers"
 	"apiBack/db/models"
 	"apiBack/services/post"
-	"fmt"
+	"apiBack/services/update"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -14,13 +14,11 @@ import (
 func AddCharacter(c *gin.Context) {
 
 	var character models.Character
-	var user models.User
 
 	err := c.BindJSON(&character)
 
 	claims := jwt.ExtractClaims(c)
 	userID := claims["_id"].(string)
-	fmt.Println("id", claims)
 
 	if err != nil {
 		c.JSON(400, gin.H{
@@ -44,11 +42,7 @@ func AddCharacter(c *gin.Context) {
 	}
 
 	//Update quantityCharacters in this user
-	// err = post.UpdateUser(character.UserID)
-
-	user, err = db.FindUserAndUpdateQuantityCharacters(userID)
-
-	fmt.Println("user", user)
+	_, err = update.UserUpdateQuantityCharacters(userID, 1)
 
 	if err != nil {
 		c.JSON(500, gin.H{
