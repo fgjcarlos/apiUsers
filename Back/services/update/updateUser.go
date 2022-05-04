@@ -14,11 +14,11 @@ func UpdateUser(user models.User) error {
 	filter := bson.M{"_id": user.ID}
 
 	update := bson.M{"$set": bson.M{
-		"name":       user.Name,
-		"password":   user.Password,
-		"key":        user.Key,
-		"quantity":   user.QuantityCharacters,
-		"updated_at": time.Now(),
+		"name":               user.Name,
+		"password":           user.Password,
+		"key":                user.Key,
+		"quantityCharacters": user.QuantityCharacters,
+		"updated_at":         time.Now(),
 	}}
 
 	err := dbController.UpdateUser(filter, update)
@@ -39,7 +39,7 @@ func UserUpdateQuantityCharacters(userID string, quantity int) (models.User, err
 
 	filter := bson.M{"_id": oid}
 
-	update := bson.M{"$inc": bson.M{"quantitycharacters": quantity}}
+	update := bson.M{"$inc": bson.M{"quantityCharacters": quantity}}
 
 	user, err = dbController.FindUserAndUpdate(filter, update)
 

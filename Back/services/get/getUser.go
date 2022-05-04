@@ -4,21 +4,10 @@ import (
 	dbController "apiBack/db/controllers"
 	"apiBack/db/models"
 
-	jwt "github.com/appleboy/gin-jwt/v2"
-	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-func ExtractClaimsID(c *gin.Context) string {
-
-	claims := jwt.ExtractClaims(c)
-
-	id := claims["_id"].(string)
-
-	return id
-}
 
 func GetUser(userIn models.User) (models.User, error) {
 

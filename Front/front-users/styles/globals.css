@@ -6,3 +6,8 @@
     font-family: "BEVAN";
     src: url("../public/fonts/Bevan/Bevan-Regular.ttf") format("truetype");
   }
+
+  @font-face {
+    font-family: "Rubik Moonrocks";
+    src: url("../public/fonts/Rubik_Moonrocks/RubikMoonrocks-Regular.ttf") format("truetype");
+  }

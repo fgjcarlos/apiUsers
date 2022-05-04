@@ -12,6 +12,7 @@ module.exports = {
       },
       fontFamily: {
         bevan: ["BEVAN", "sans-serif"],
+        moonRocks: ['Rubik Moonrocks', 'cursive']
       },
       display: ["group-hover"],
 

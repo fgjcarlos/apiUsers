@@ -130,3 +130,12 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 
 	return authMiddleware, err
 }
+
+func ExtractClaimsID(c *gin.Context) string {
+
+	claims := jwt.ExtractClaims(c)
+
+	id := claims["_id"].(string)
+
+	return id
+}

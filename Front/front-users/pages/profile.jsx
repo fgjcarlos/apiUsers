@@ -13,7 +13,7 @@ import Button from "components/Button";
 import { serverHost, serverStaticDir } from "utils/globalVars";
 import ModalConfirm from "components/ModalConfirm";
 import { Toaster } from "react-hot-toast";
-import {throwSuccessToast} from "utils/toast"
+import { throwSuccessToast } from "utils/toast"
 import ModalViewAvatar from "components/ModalViewAvatar";
 
 export default function Profile({ userData }) {
@@ -31,14 +31,13 @@ export default function Profile({ userData }) {
     const [modal, setShowModal] = useState(false)
     const titleModal = "Are you sure to modify the character?"
 
-    console.log("modal", modal)
-
     dayjs.extend(customParseFormat)
 
-    charactersUsers && console.log("sf", charactersUsers[0]?.style?.backgroundColor);
+    // TODO--> debug print
+
 
     const handleModifyCharacter = () => {
-        const {character} = characterSelected
+        const { character } = characterSelected
         console.log(character.id);
         // setShowModal(true)
 
@@ -68,7 +67,7 @@ export default function Profile({ userData }) {
 
     const handleOperationsCharacter = () => {
 
-        const {character} = characterSelected
+        const { character } = characterSelected
 
         switch (characterSelected.action) {
             case "modify":
@@ -161,15 +160,22 @@ export default function Profile({ userData }) {
             </div>
 
             <div className="text-center">
-                <h1 className="m-0 text-2xl font-semibold capitalize">{userLogin?.name}</h1>
-                <p className="text-sm text-gray-500">{`Member since ${memberSince}`}</p>
-                {userLogin?.bio && <p>{userLogin?.bio}</p>}
+                <h1 className="m-0 text-[36px] lg:text-[48px] font-semibold text-gray-800  capitalize font-moonRocks">{userLogin?.name}</h1>
+                <p className="text-sm text-gray-500">
+                    {`Member since ${memberSince}`}
+                </p>
+                {
+                    userLogin?.bio &&
+                    <p className="text-left w-[60%] mx-auto my-4 text-gray-700">
+                        {userLogin?.bio}
+                    </p>
+                }
                 <Button onClick={() => router.push("/editProfile")}>
                     Edit Profile
                 </Button>
             </div>
 
-            <div className="p-2 text-center rounded-2xl bg-slate-500">
+            <div className="p-2 my-4 text-center rounded-2xl bg-slate-500">
                 <h2 className="text-lg font-semibold ">Characters created</h2>
                 <div className="flex flex-col flex-wrap items-center justify-center gap-4 p-4 lg:flex-row lg:justify-between ">
                     {
@@ -198,12 +204,12 @@ export default function Profile({ userData }) {
                                         <div
                                             onClick={() => { setShowModal(true); setCharacterSelected({ character, action: "delete" }) }}
                                             className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🚫 Delete</div>
-                                        <div 
-                                        onClick={() => {setShowModal(true); setCharacterSelected({ character, action: "modify" }) }} 
-                                        className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">⚙️ Modify</div>
-                                        <div 
-                                        onClick={() => {setModalViewAvatar(true); setCharacterSelected({ character, action: "" }) }}
-                                        className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🖥️ View</div>
+                                        <div
+                                            onClick={() => { setShowModal(true); setCharacterSelected({ character, action: "modify" }) }}
+                                            className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">⚙️ Modify</div>
+                                        <div
+                                            onClick={() => { setModalViewAvatar(true); setCharacterSelected({ character, action: "" }) }}
+                                            className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🖥️ View</div>
                                     </div>
 
                                 </div>
@@ -228,7 +234,7 @@ export default function Profile({ userData }) {
             }
 
             {
-                modalViewAvatar && characterSelected && <ModalViewAvatar onExit={()=> setModalViewAvatar(false)} character={characterSelected.character} />
+                modalViewAvatar && characterSelected && <ModalViewAvatar onExit={() => setModalViewAvatar(false)} character={characterSelected.character} />
             }
 
         </div>

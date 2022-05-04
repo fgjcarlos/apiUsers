@@ -23,15 +23,15 @@ export default function ChooseBgAvatar({ handleChooseAvatar, onDone }) {
     }
 
     return (
-        <div className='max-w-3xl h-full w-[90%] bg-white p-10 box-border flex flex-col justify-between items-stretch'>
+        <div className='box-border flex flex-col items-stretch justify-between w-full h-full gap-2 p-4 bg-white lg:justify-center'>
 
-            <h1 className='mt-2 mb-2 text-2xl font-bold text-center'>
+            <h1 className='text-xl font-bold text-center'>
                 Select background of your avatar
             </h1>
 
             <div className='box-border flex flex-wrap items-center justify-around gap-10 rounded-md h-4/6'>
 
-                <div className='w-56 h-60'>
+                <div className='w-48 h-56'>
                     <Avatar
                         avatar={storeAvatar}
                         bg={color}
@@ -47,7 +47,7 @@ export default function ChooseBgAvatar({ handleChooseAvatar, onDone }) {
                 />
             </div>
 
-            <Button onClick={handleSetBgAvatar} classButton="self-end mr-5">
+            <Button onClick={handleSetBgAvatar} classButton="self-center">
                 Done
             </Button>
 

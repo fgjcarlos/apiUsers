@@ -2,6 +2,7 @@ package c_get
 
 import (
 	"apiBack/db/models"
+	"apiBack/middelwares"
 	"apiBack/services/get"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,7 @@ func GetUserInfo(c *gin.Context) {
 	var userInfo models.User
 	var err error
 
-	id := get.ExtractClaimsID(c)
+	id := middelwares.ExtractClaimsID(c)
 
 	userInfo, err = get.GetUserById(id)
 

@@ -28,7 +28,7 @@ func AddCharacter(c *gin.Context) {
 	}
 
 	// Save in DB
-	character.ID, err = db.GenerateCharacterID()
+	character.ID, err = db.GenerateID()
 	character.CreatedAt = time.Now()
 	character.UpdatedAt = time.Now()
 

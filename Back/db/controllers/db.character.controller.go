@@ -8,6 +8,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var collectionCharacters = db.GetCollection("characters")
@@ -90,15 +91,34 @@ func DeleteCharacter(filter primitive.M) error {
 }
 
 // Get amount of Characters and sum 1 for ID
-func GenerateCharacterID() (int, error) {
+func GenerateID() (int, error) {
 
-	filter := bson.M{}
+	var Characters models.Characters
 
-	amountCharacters, err := collectionCharacters.CountDocuments(ctxCharacter, filter)
+	filter := bson.D{}
+
+	options := options.Find().SetSort(bson.D{{"_id", -1}}).SetLimit(1)
+
+	// amountCharacters, err := collectionCharacters.CountDocuments(ctxCharacter, filter)
+	cur, err := collectionCharacters.Find(ctxCharacter, filter, options)
 
 	if err != nil {
 		return 0, err
 	}
 
-	return int(amountCharacters) + 1, nil
+	for cur.Next(ctxCharacter) {
+
+		var Character u.Character
+		_ = cur.Decode(&Character)
+
+		if err != nil {
+			return 0, err
+		}
+
+		Characters = append(Characters, &Character)
+	}
+
+	lastCharacterID := Characters[0].ID
+
+	return int(lastCharacterID + 2), nil
 }

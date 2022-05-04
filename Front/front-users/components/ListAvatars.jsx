@@ -19,7 +19,7 @@ export default function ListAvatars({ avatars }) {
   return (
     <div
       ref={lazyRoot}
-      className="flex flex-wrap items-center justify-center w-11/12 h-full gap-5 p-5 overflow-y-scroll rounded-md scrollbar scrollbar-thumb-gray-800 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-700"
+      className="flex flex-wrap items-center justify-center w-full h-full gap-5 p-5 overflow-y-scroll rounded-md lg:w-11/12 scrollbar scrollbar-thumb-gray-800 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-700"
     >
       {avatars.map(avatar =>
         <div
