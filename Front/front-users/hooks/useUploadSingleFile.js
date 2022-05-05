@@ -4,7 +4,7 @@ import { useState } from "react";
 import { serverHost } from "utils/globalVars";
 
 export default function useUploadAvatar() {
-  const urlServer = `${serverHost}/avatar/add`
+  const urlServer = `${serverHost}/upload`
 
   const [file, setFile] = useState(null);
 

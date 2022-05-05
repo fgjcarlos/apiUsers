@@ -20,8 +20,8 @@ export default function UploadAvatar() {
 
         setFile({
             files: e.target.files,
-            dir: "avatars",
-            type: "avatar"
+            dir: "profilePhoto",
+            type: "profilePhoto"
         })
     }
 
@@ -29,22 +29,17 @@ export default function UploadAvatar() {
 
         e.preventDefault()
 
-        const messageLoading = "Uploading data... Wait please."
-        const messageOk = "The file has been uploaded successfully."
-        const messageError = "An error has occurred."
-        const duration = 4000
-
         if (file) {
 
-            const toastLoading = throwLoadingToast(messageLoading)
+            const toastLoading = throwLoadingToast("Uploading data... Wait please.")
 
             const response = await handleUpload()
 
             toast.dismiss(toastLoading);
 
             response.ok
-                ? throwSuccessToast(messageOk, duration)
-                : throwErrorToast(messageError, duration)
+                ? throwSuccessToast("The file has been uploaded successfully.", 4000)
+                : throwErrorToast("An error has occurred.", 4000)
 
             // *Reset form and state file
             formRef.current.reset()

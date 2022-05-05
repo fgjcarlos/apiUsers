@@ -73,6 +73,15 @@ func UploadFile(c *gin.Context) {
 
 			// # Save to db
 			errDb = post.AddAvatar(newAvatar)
+		case "profilePhoto":
+			newPrifilePhoto := models.ProfilePhoto{
+				Name:      newFileName,
+				Url:       urlDir,
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}
+
+			errDb = post.AddProfilePhoto(newPrifilePhoto)
 
 		default:
 			c.JSON(500, gin.H{"message": "Not type file"})

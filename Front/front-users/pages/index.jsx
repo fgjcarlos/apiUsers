@@ -27,7 +27,6 @@ export default function Home(props) {
 
   const { characters } = props
 
-  console.log({characters});
 
   return (
     <>

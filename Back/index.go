@@ -62,6 +62,13 @@ func main() {
 	// TODO --> Add a middelware type acces key
 	r.POST("/upload", c_post.UploadFile)
 
+	// *Endpoint "profilePhoto"
+	profilePhotoGroup := r.Group("/profilePhoto")
+	{
+		profilePhotoGroup.GET("/all", c_get.GetAllProfilePhotos)
+		profilePhotoGroup.GET("/:id", c_get.GetProfilePhotosById)
+	}
+
 	// *Endpoint "AVATAR"
 	avatarGroup := r.Group("/avatar")
 	{
