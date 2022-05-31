@@ -4,6 +4,7 @@ import (
 	"apiBack/controllers/c_delete"
 	"apiBack/controllers/c_get"
 	"apiBack/controllers/c_post"
+	"apiBack/controllers/c_update"
 	"apiBack/db/models"
 	mw "apiBack/middelwares"
 
@@ -84,6 +85,8 @@ func main() {
 		charactersGroup.GET("/:id", c_get.GetCharacterById)
 		// TODO -> Add mw for max. quantity of characters <= 3
 		charactersGroup.POST("/add", mwAuth.MiddlewareFunc(), c_post.AddCharacter)
+		charactersGroup.PATCH("/modify", mwAuth.MiddlewareFunc(), c_update.CharacterUpdate)
+
 	}
 
 	// *Endopint "USER"
@@ -95,6 +98,7 @@ func main() {
 		usersGroup.GET("/refresh_token", mwAuth.RefreshHandler)
 		usersGroup.POST("/register", c_post.RegisterUser)
 		usersGroup.POST("/login", mwAuth.LoginHandler)
+		usersGroup.PATCH("/update_profile", mwAuth.MiddlewareFunc(), c_update.UpdateUserProfile)
 		usersGroup.DELETE("/character/:id", mwAuth.MiddlewareFunc(), c_delete.DeleteCharacter)
 	}
 

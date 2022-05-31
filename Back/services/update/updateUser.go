@@ -3,6 +3,7 @@ package update
 import (
 	dbController "apiBack/db/controllers"
 	"apiBack/db/models"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,17 +14,22 @@ func UpdateUser(user models.User) error {
 
 	filter := bson.M{"_id": user.ID}
 
-	update := bson.M{"$set": bson.M{
-		"name":               user.Name,
-		"password":           user.Password,
-		"key":                user.Key,
-		"quantityCharacters": user.QuantityCharacters,
-		"updated_at":         time.Now(),
-	}}
+	userUpdate := bson.M{
+		"$set": bson.M{
+			"name":               user.Name,
+			"profilePhoto":       user.ProfilePhoto,
+			"rol":                user.Rol,
+			"bio":                user.Bio,
+			"key":                user.Key,
+			"quantityCharacters": user.QuantityCharacters,
+			"updated_at":         time.Now(),
+		},
+	}
 
-	err := dbController.UpdateUser(filter, update)
+	err := dbController.UpdateUser(filter, userUpdate)
 
 	if err != nil {
+		fmt.Println("Fail to update user")
 		return err
 	}
 

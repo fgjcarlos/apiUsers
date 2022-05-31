@@ -34,11 +34,14 @@ export default function Profile({ userData }) {
     dayjs.extend(customParseFormat)
 
     // TODO--> debug print
-
+    // console.log(userLogin);
 
     const handleModifyCharacter = () => {
         const { character } = characterSelected
-        console.log(character.id);
+
+        dispatch({ type: "@character/set", payload: character });
+        router.push("/editCharacter")
+        
         // setShowModal(true)
 
     }
@@ -149,9 +152,10 @@ export default function Profile({ userData }) {
                     <div className=" bg-white w-[180px] h-[180px] lg:w-[260px] lg:h-[260px] rounded-full flex justify-center items-center absolute bottom-0 left-[50%] translate-y-[50%]  translate-x-[-50%]">
                         <div className="relative w-[160px] h-[160px]  shadow-lg shadow-slate-600  overflow-hidden lg:w-[230px] lg:h-[230px] bg-gray-100 rounded-full ">
                             <Image
-                                objectFit="cover"
+                                objectFit="none"
                                 alt={userLogin?.name}
-                                src={BgProfile2}
+                                // src={BgProfile2}
+                                src={`${serverStaticDir}${userLogin?.profilePhoto.url}`}
                                 layout="fill"
                             />
                         </div>

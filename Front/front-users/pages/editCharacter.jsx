@@ -1,50 +1,38 @@
 // DEPENDENCIES
-import { useState, useRef, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import Image from "next/image";
-import { Formik, Field, ErrorMessage, Form } from "formik";
-import toast, { Toaster } from 'react-hot-toast';
+import { useDispatch, useSelector } from "react-redux";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { useRouter } from 'next/router';
-// COMPONENTS
-import ChooseBgAvatar from '../components/ChooseBgAvatar';
-import Modal from '../components/Modal';
-import Button from "components/Button";
-import { Avatar } from 'components/Avatar';
-import { ChooseAvatar } from './../components/ChooseAvatar';
-// RESOURCES
-import AvatarDefault from 'public/avatarDefault.png'
-import { throwErrorToast, throwLoadingToast, throwSuccessToast } from 'utils/toast';
-import { serverHost } from 'utils/globalVars';
-import FormCharacter from 'components/FormCharacter';
 
-export default function Addcharacter(props) {
+// COMPONENTS
+import FormCharacter from "components/FormCharacter";
+import { Toaster } from "react-hot-toast";
+import { useEffect, useRef } from "react";
+import { serverHost } from "utils/globalVars";
+import { throwErrorToast, throwLoadingToast, throwSuccessToast } from "utils/toast";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
+
+export default function EditCharacter({avatars}) {
 
     dayjs.extend(utc)
 
-    const { avatars } = props
-    const formRef = useRef();
-    const router = useRouter()
-
     const dispatch = useDispatch();
+    const formRef = useRef();
+    const character = useSelector(state => state.character);
     const storeAvatar = useSelector((s) => s.avatar);
     const user = useSelector((s) => s.login);
+    const router = useRouter()
+
 
     useEffect(() => {
-        dispatch({ type: "@avatar/reset" })
-    }, []) // eslint-disable-line
+        character && dispatch({ type: "@avatar/set", payload: character.avatar })
+    }, [character]) // eslint-disable-line
 
+    const handleSubmit = async (values) => {
 
-
-    const handleSubmit = async (values, { setSubmitting }) => {
-
-        if (!storeAvatar) return
-
-        const urlServer = `${serverHost}/character/add`
-
-        const character = {
+        const characterModified = {
             ...values,
+            id: character.id,
             avatar: storeAvatar,
             name: values.name.toLowerCase(),
             profession: values.profession.toLowerCase(),
@@ -57,13 +45,14 @@ export default function Addcharacter(props) {
 
         const toastLoading = throwLoadingToast("Uploading data... Wait please.")
 
+        const urlServer = `${serverHost}/character/modify`
         const response = await fetch(urlServer, {
-            method: "POST",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
-            body: JSON.stringify({ ...character }),
+            body: JSON.stringify({...characterModified }),
         });
 
         toast.dismiss(toastLoading);
@@ -72,16 +61,17 @@ export default function Addcharacter(props) {
             ? throwSuccessToast("The character has been added successfully.", 10000)
             : throwErrorToast("An error has occurred.", 6000)
 
-        // *Reset form and avatar
+                    // *Reset form and avatar
         response.ok && setTimeout(() => {
-            formRef.current.reset()
-            dispatch({ type: "@avatar/reset" })
             router.push("/profile")
         }, 2000);
+
     }
 
-    return (
+    if(!character) return "Loading..."
 
+
+    return (
         <div className='flex flex-col items-center justify-center gap-4 p-4 pt-8'>
             <Toaster />
             <h1 className='text-2xl font-semibold'>
@@ -94,15 +84,14 @@ export default function Addcharacter(props) {
             <FormCharacter
                 handleSubmit={handleSubmit}
                 formRef={formRef}
-            // avatars={avatars} 
+                avatars={avatars}
+                initialValues={character}
             />
 
         </div >
 
     )
-
 }
-
 
 export async function getStaticProps() {
     // Get external data from the file system, API, DB, etc.

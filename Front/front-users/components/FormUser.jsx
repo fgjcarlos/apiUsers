@@ -3,23 +3,65 @@ import { ErrorMessage } from "formik";
 import { Formik } from "formik";
 import { Field } from "formik";
 import { Form } from "formik";
+import Image from "next/image";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { serverHost } from "utils/globalVars";
+import { serverHost, serverStaticDir } from "utils/globalVars";
+import Button from "./Button";
+import { ChooseAvatar } from "./ChooseAvatar";
+import Modal from "./Modal";
 
-export default function FormUser({ onSubmit, typeForm, initialValues }) {
+export default function FormUser({ onSubmit, typeForm, initialValues, profilesPhoto }) {
 
     const urlNamesUser = `${serverHost}/user/all`;
     const [countCharacters, setCountCharacters] = useState(0);
+    const [profilePhoto, setProfilePhoto] = useState(initialValues?.profilePhoto ?? null)
+    const [showModal, setShowModal] = useState(false)
+
+    // console.log('%cDEBUG:', 'color: #ff25e2; background: #1d1b1b; padding: 2px;', {profilesPhoto});
+
 
     return (
-        <div className="w-[90%] lg:w-[40%] bg-slate-100 p-4 rounded-lg shadow-lg">
+        <div className="w-[90%] lg:w-[40%]  bg-slate-100 p-4 rounded-lg shadow-lg">
             <Toaster />
+
+            {
+                showModal &&
+                <Modal>
+                    <div
+                        className="flex flex-wrap items-center justify-around w-full h-full gap-2 p-4 bg-white"
+                    >
+                        {
+                            profilesPhoto.map(photo =>
+                                <div
+                                    key={photo.id}
+                                    onClick={() => {
+                                        setProfilePhoto(photo)
+                                        setShowModal(false)
+                                    }}
+                                    className="rounded-[50%] hover:scale-105 hover:shadow-lg hover:shadow-red-400 cursor-pointer relative h-[150px] w-[150px]">
+                                    <Image
+                                        // lazyRoot={lazyRoot}
+                                        className="text-sm text-center "
+                                        objectFit="contain"
+                                        alt={photo?.name}
+                                        src={`${serverStaticDir}${photo?.url}`}
+                                        // lazyBoundary="200px"
+                                        layout="fill"
+                                    />
+                                </div>
+
+                            )
+                        }
+                    </div>
+
+                </Modal>
+            }
 
             <Formik
                 initialValues={{
                     name: initialValues?.name || "",
-                    password: initialValues?.password || "",
+                    password:"",
                     bio: initialValues?.bio || "",
                     rol: "user",
                 }}
@@ -30,7 +72,7 @@ export default function FormUser({ onSubmit, typeForm, initialValues }) {
                         setCountCharacters(values.bio.length)
                     }
 
-                    if (values.name.length > 2 && typeForm === "register") {
+                    if (values.name.length > 2) {
                         const response = await fetch(urlNamesUser, {
                             method: "GET"
                         });
@@ -38,24 +80,63 @@ export default function FormUser({ onSubmit, typeForm, initialValues }) {
                             users
                         } = await response.json();
 
-                        if (users && users.find(user => user.name === values.name)) {
+                       if (typeForm === "register" && users && users.find(user => user.name === values.name)) {
                             // if the name is already in the db
                             errors.name = "* The name is already in the db.";
                         }
+
+                        if(typeForm === "edit" && users && users.find(user => (user.name === values.name) && (values.name !== initialValues.name))) {
+                            // if the name is already in the db
+                            errors.name = "* The name is already in the db.";
+                        }
+
+                        
+
                     }
 
-                    if (values.password.length < 6) {
+                    if (typeForm === "register" && values.password.length < 6) {
                         errors.password = "* The password must be at least 6 characters long.";
                     }
 
                     return errors;
                 }}
-                onSubmit={onSubmit}
+                onSubmit={values => {
+                    values.profilePhoto = profilePhoto
+
+                    onSubmit(values)
+                }}
                 onChange={(e) => { console.log(e) }}
             >
                 {({
                     isSubmitting
                 }) => <Form className="flex flex-col gap-4 " autoComplete="false">
+
+                         {
+                            typeForm !== "login" && 
+                        <div className="flex flex-col items-center justify-center gap-4">
+                            <div className="rounded-[50%] relative h-[150px] w-[150px] bg-zinc-400">
+                                <Image
+                                    // lazyRoot={lazyRoot}
+                                    className="text-sm text-center"
+                                    objectFit="contain"
+                                    alt="Profile photo"
+                                    src={`${serverStaticDir}${profilePhoto?.url}`}
+                                    // lazyBoundary="200px"
+                                    layout="fill"
+                                />
+                            </div>
+
+                            <Button onClick={e => {
+                                e.preventDefault()
+                                setShowModal(true)
+                            }}>
+                                Select photo
+                            </Button>
+
+                        </div>
+
+
+                }
 
                         <div className="p-2">
                             <label className="block mb-2 font-bold" htmlFor="name">
@@ -67,42 +148,43 @@ export default function FormUser({ onSubmit, typeForm, initialValues }) {
                         </div>
 
 
-                        {
-                            typeForm === "register" && <div className="p-2">
-                                <label className="block mb-2 font-bold " htmlFor="bio">
-                                    Bio
-                                </label>
+{          typeForm !== "login" &&               <div className="p-2">
+                            <label className="block mb-2 font-bold " htmlFor="bio">
+                                Bio
+                            </label>
 
-                                <div className="relative">
-                                    {/* // TODO --> eliminar div, befor, after o handlec🖐  */}
-                                    <Field
-                                        as="textarea"
-                                        maxLength="140"
-                                        placeholder="max 140 chars."
-                                        name="bio"
-                                        className="  h-[130px] w-11/12 p-2 border rounded-md"
-                                    />
-                                    <span className="absolute text-xs font-light text-gray-500 bottom-1 right-12">
-                                        {`${countCharacters}/140`}
-                                    </span>
-
-                                </div>
-
-
-
-                                <ErrorMessage className='mt-1 text-sm text-red-600 ' name="bio" component="div" />
+                            <div className="relative">
+                                <Field
+                                    as="textarea"
+                                    maxLength="140"
+                                    placeholder="max 140 chars."
+                                    name="bio"
+                                    className="  h-[130px] w-11/12 p-2 border rounded-md"
+                                />
+                                <span className="absolute text-xs font-light text-gray-500 bottom-1 right-12">
+                                    {`${countCharacters}/140`}
+                                </span>
 
                             </div>
-                        }
 
-                        <div className="p-2">
-                            <label className="block mb-2 font-bold" htmlFor="password">
-                                Password
-                            </label>
-                            <Field type="password" name="password" className="w-11/12 p-1 border rounded-md" />
-                            <ErrorMessage className='mt-1 text-sm text-red-600 ' name="password" component="div" />
 
-                        </div>
+
+                            <ErrorMessage className='mt-1 text-sm text-red-600 ' name="bio" component="div" />
+
+                        </div>}
+
+
+                        {
+                        typeForm !== "edit" &&
+                            <div className="p-2">
+                                <label className="block mb-2 font-bold" htmlFor="password">
+                                    Password
+                                </label>
+                                <Field type="password" name="password" className="w-11/12 p-1 border rounded-md" />
+                                <ErrorMessage className='mt-1 text-sm text-red-600 ' name="password" component="div" />
+
+                            </div>
+                            }
 
                         <button className="self-center my-6 text-white bg-blue-600 border-none rounded-md cursor-pointer hover:bg-blue-700 w-28 h-9" type="submit" disabled={isSubmitting}>
                             Submit
