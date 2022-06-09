@@ -2,6 +2,7 @@ package c_get
 
 import (
 	"apiBack/services/get"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -60,11 +61,13 @@ func GetCharacterById(c *gin.Context) {
 	idInt, err := strconv.Atoi(id)
 
 	if err != nil {
-		c.JSON(404, gin.H{"message": "Fail get data"})
+		c.JSON(404, gin.H{"message": "Fail parse data"})
 		return
 	}
 
 	Character, err := get.GetCharacterById(idInt)
+
+	fmt.Println(err)
 
 	if err != nil {
 		// log.Panic(err)
@@ -76,7 +79,7 @@ func GetCharacterById(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"message":   "Obtained Character successfully",
-		"Character": Character,
+		"character": Character,
 	})
 
 }

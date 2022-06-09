@@ -6,7 +6,7 @@ import { RgbaColorPicker } from "react-colorful";
 import { Avatar } from "./Avatar";
 import Button from "./Button";
 
-export default function ChooseBgAvatar({show, handleChooseAvatar, onDone }) {
+export default function ChooseBgAvatar({ show, handleChooseAvatar, onDone }) {
 
     const [color, setColor] = useState({ r: 255, g: 255, b: 255, a: 1 });
     const storeAvatar = useSelector((s) => s.avatar);
@@ -22,7 +22,7 @@ export default function ChooseBgAvatar({show, handleChooseAvatar, onDone }) {
         onDone()
     }
 
-    if(!show) return null;
+    if (!show) return null;
 
     return (
 
@@ -54,7 +54,11 @@ export default function ChooseBgAvatar({show, handleChooseAvatar, onDone }) {
                         />
                     </div>
 
-                    <Button onClick={handleSetBgAvatar} classButton="self-center">
+                    <Button
+                        show={true}
+                        onClick={handleSetBgAvatar}
+                        classButton="self-center"
+                    >
                         Done
                     </Button>
 

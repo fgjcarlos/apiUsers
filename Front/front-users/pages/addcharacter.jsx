@@ -66,18 +66,22 @@ export default function Addcharacter(props) {
             body: JSON.stringify({ ...character }),
         });
 
-        toast.dismiss(toastLoading);
-
-        response.ok
-            ? throwSuccessToast("The character has been added successfully.", 10000)
-            : throwErrorToast("An error has occurred.", 6000)
+        toast.dismiss(toastLoading)
 
         // *Reset form and avatar
-        response.ok && setTimeout(() => {
-            formRef.current.reset()
-            dispatch({ type: "@avatar/reset" })
-            router.push("/profile")
-        }, 2000);
+        if (response.ok) {
+            
+            throwSuccessToast("The character has been added successfully.", 10000)
+
+            setTimeout(() => {
+                formRef.current.reset()
+                dispatch({ type: "@avatar/reset" })
+                router.push("/profile")
+            }, 2000);
+        }else {
+            throwErrorToast("An error has occurred.", 6000)
+        }
+
     }
 
     return (
@@ -94,7 +98,7 @@ export default function Addcharacter(props) {
             <FormCharacter
                 handleSubmit={handleSubmit}
                 formRef={formRef}
-            // avatars={avatars} 
+                avatars={avatars}
             />
 
         </div >

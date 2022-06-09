@@ -3,6 +3,7 @@ package get
 import (
 	dbController "apiBack/db/controllers"
 	"apiBack/db/models"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -42,6 +43,8 @@ func GetCharacters() (models.Characters, error) {
 }
 
 func GetCharacterById(CharacterID int) (models.Character, error) {
+
+	fmt.Println("id character", CharacterID)
 
 	filter := bson.M{"_id": CharacterID}
 

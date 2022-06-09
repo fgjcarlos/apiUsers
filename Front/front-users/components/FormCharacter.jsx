@@ -1,6 +1,6 @@
 // DEPENDENCIES
 import { useState } from 'react'
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Image from "next/image";
 import { Formik, Field, ErrorMessage, Form } from "formik";
 import dayjs from 'dayjs';
@@ -13,13 +13,9 @@ import { ChooseAvatar } from './../components/ChooseAvatar';
 // RESOURCES
 import AvatarDefault from 'public/avatarDefault.png'
 
-export default function FormCharacter({handleSubmit, formRef, initialValues, avatars}) {
+export default function FormCharacter({ handleSubmit, formRef, initialValues, avatars }) {
 
     dayjs.extend(utc)
-
-    console.log('initialValues :>> ', initialValues);
-    console.log("date",initialValues?.birthday && dayjs(initialValues?.birthday).format("YYYY/MM/DD"));
-
 
     const [showModalChooseAvatar, setShowModalChooseAvatar] = useState(false)
     const [showModalChooseBgAvatar, setShowModalChooseBgAvatar] = useState(false)
@@ -65,13 +61,14 @@ export default function FormCharacter({handleSubmit, formRef, initialValues, ava
 
             <Formik
                 initialValues={
-                    { 
-                        name: initialValues?.name || '', 
-                        birthday: birthday || '', 
-                        profession: initialValues?.profession || '', 
-                        interests: initialValues?.interests || "", 
-                        gender: initialValues?.gender || "", 
-                        biography: initialValues?.biography || "" 
+                    {
+                        name: initialValues?.name || '',
+                        birthday: birthday || '',
+                        profession: initialValues?.profession || '',
+                        interests: initialValues?.interests || "",
+                        gender: initialValues?.gender || "",
+                        biography: initialValues?.biography || "",
+                        avatar: initialValues.avatar || "",
                     }
                 }
                 validate={values => {
@@ -127,9 +124,9 @@ export default function FormCharacter({handleSubmit, formRef, initialValues, ava
                             >
 
                                 {
-                                    storeAvatar
+                                    storeAvatar || initialValues.avatar
                                         ? <div className='w-40 h-48'>
-                                            <Avatar avatar={storeAvatar} />
+                                            <Avatar avatar={storeAvatar || initialValues.avatar } />
                                         </div>
                                         : <Image alt='avatar-default' src={AvatarDefault} width={150} height={150} />
                                 }
@@ -141,7 +138,9 @@ export default function FormCharacter({handleSubmit, formRef, initialValues, ava
                                     </div>
                                 }
 
-                                <Button onClick={handleSetChooseAvatar}>
+                                <Button
+                                    show={true}
+                                    onClick={handleSetChooseAvatar}>
                                     Select avatar
                                 </Button>
 

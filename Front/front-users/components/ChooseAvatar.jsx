@@ -22,10 +22,17 @@ export function ChooseAvatar({ show, avatars, onDone, onExit }) {
                     <ListAvatars avatars={avatars} />
 
                     <div className='flex w-2/3 gap-2 lg:my-4 justify-evenly'>
-                        <Button onClick={onDone} state={!storeAvatar}>
+                        <Button
+                            show={true}
+                            onClick={onDone}
+                            state={!storeAvatar}
+                        >
                             Done
                         </Button>
-                        <Button onClick={onExit}>
+                        <Button
+                            show={true}
+                            onClick={onExit}
+                        >
                             Exit
                         </Button>
                     </div>

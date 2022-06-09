@@ -3,9 +3,12 @@ import Image from "next/image";
 import { serverStaticDir } from "utils/globalVars";
 import Button from "./Button";
 
-export default function ModalViewAvatar({ onExit, character }) {
+export default function ModalViewAvatar({ show, onExit, character }) {
+
+    if (!show) return null;
+
     return (
-        <div className="h-full w-full bg-gray-600/60 z-50 fixed scroll- inset-0">
+        <div className="fixed inset-0 z-50 w-full h-full bg-gray-600/60 scroll-">
             <div className="relative box-border flex items-center justify-center w-[80%] max-w-4xl overflow-auto h-[90%] rounded-3xl bg-slate-300 p10 mx-auto top-8">
 
                 <div className='flex flex-col justify-between w-full h-full gap-4 p-4 overflow-auto sm:p-8 '>
@@ -62,6 +65,7 @@ export default function ModalViewAvatar({ onExit, character }) {
                     </div>
 
                     <Button
+                        show={true}
                         onClick={onExit}
                         classButton={'self-center'}
                     >

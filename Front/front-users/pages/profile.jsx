@@ -1,167 +1,44 @@
 // DEPENDENCIES
 import { useDispatch, useSelector } from "react-redux";
-// RESOURCES
-import BgProfile1 from 'public/images/profile/profile3.jpg'
-import BgProfile2 from 'public/images/profile/profile2.jpg'
-import Image from "next/image";
 import { useRouter } from "next/router";
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useEffect, useState } from "react";
-import useIsMounted from 'hooks/useIsMounted';
-import Button from "components/Button";
-import { serverHost, serverStaticDir } from "utils/globalVars";
-import ModalConfirm from "components/ModalConfirm";
 import { Toaster } from "react-hot-toast";
-import { throwSuccessToast } from "utils/toast"
+// COMPONENTS
+import ListCardCharacters from "components/ListCardCharacters";
 import ModalViewAvatar from "components/ModalViewAvatar";
+import ModalConfirm from "components/ModalConfirm";
+import Button from "components/Button";
+import Spinner from "components/Spinner";
+import ProfileHero from "components/ProfileHero";
+// HOOKS
+import { useProfile } from "hooks/useProfile";
+import useIsMounted from 'hooks/useIsMounted';
+// RESOURCES
 
-export default function Profile({ userData }) {
+export default function Profile() {
 
     const router = useRouter()
-    const userLogin = useSelector(state => state.login);
-    const [loaded] = useIsMounted()
-    const [charactersUsers, setCharactersUsers] = useState(null)
+    const [spinner, charactersUsers, handleOperationsCharacter] = useProfile(router);
     const dispatch = useDispatch();
-    const [spinner, setSpinner] = useState(false)
-    const [updateUser, setUpdateUser] = useState(false)
-    const [characterSelected, setCharacterSelected] = useState(null)
-    const [modalViewAvatar, setModalViewAvatar] = useState(false)
-
-    const [modal, setShowModal] = useState(false)
+    const userLogin = useSelector(state => state.login);
+    const character = useSelector(state => state.character);
+    const modalConfirm = useSelector(state => state.modalConfirm);
+    const modalViewAvatar = useSelector(state => state.modalViewCharacter);
+    const [loaded] = useIsMounted()
     const titleModal = "Are you sure to modify the character?"
-
+    const memberSince = dayjs(userLogin?.created_at).format('MMMM DD, YYYY')
     dayjs.extend(customParseFormat)
 
     // TODO--> debug print
-    // console.log(userLogin);
+    // console.log("maxCharacter", maxCharacter);
 
-    const handleModifyCharacter = () => {
-        const { character } = characterSelected
-
-        dispatch({ type: "@character/set", payload: character });
-        router.push("/editCharacter")
-        
-        // setShowModal(true)
-
-    }
-
-    const handleViewCharacter = () => {
-
-    }
-
-    const handleDeleteCharacter = async (id) => {
-
-        let response = await fetch(`${serverHost}/user/character/${id}`, {
-            method: "DELETE",
-            headers: {
-                // "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-        })
-
-        if (response.status === 200) {
-            throwSuccessToast("Character deleted successfully", 2000)
-            setUpdateUser(true)
-            setShowModal(false)
-        }
-
-    }
-
-    const handleOperationsCharacter = () => {
-
-        const { character } = characterSelected
-
-        switch (characterSelected.action) {
-            case "modify":
-                handleModifyCharacter(character.id)
-                break;
-            case "delete":
-                handleDeleteCharacter(character.id)
-                break;
-            default:
-                break;
-        }
-    }
-
-    useEffect(() => {
-        let isSubscribed = true;
-
-        const token = localStorage.getItem("token");
-
-        const getCharacters = async () => {
-
-            setSpinner(true)
-
-            let response = await fetch(`${serverHost}/user/characters/${userLogin.id}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-
-            let { characters } = await response.json()
-
-            // Update user in login
-            const resUserInfo = await fetch(`${serverHost}/user/info`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            const { user } = await resUserInfo.json();
-
-            if (resUserInfo.ok && user) {
-                dispatch({ type: "login", payload: user });
-            }
-            setCharactersUsers(characters)
-            setSpinner(false)
-        }
-
-        userLogin && isSubscribed && getCharacters()
-
-        if (!userLogin && charactersUsers) {
-            router.push("/login");
-            return null
-        }
-
-        return () => isSubscribed = false;
-
-    }, [updateUser, router]) // eslint-disable-line react-hooks/exhaustive-deps
-
-
-    if (!loaded) return "Loading..."
-
-    const memberSince = dayjs(userLogin?.created_at).format('MMMM DD, YYYY')
+    if (!loaded) return <Spinner />
 
     return (
         <div className='lg:w-[80%] box-content mx-auto p-4'>
             <Toaster />
-            <div className=" box-content h-[270px] lg:h-[380px] mx-auto p-4">
-                <div className="h-[180px]  lg:h-[250px] relative">
-                    <Image
-                        className="rounded-[45px]"
-                        objectFit="cover"
-                        alt={"bg profile"}
-                        src={BgProfile1}
-                        layout="fill"
-                    />
-                    <div className=" bg-white w-[180px] h-[180px] lg:w-[260px] lg:h-[260px] rounded-full flex justify-center items-center absolute bottom-0 left-[50%] translate-y-[50%]  translate-x-[-50%]">
-                        <div className="relative w-[160px] h-[160px]  shadow-lg shadow-slate-600  overflow-hidden lg:w-[230px] lg:h-[230px] bg-gray-100 rounded-full ">
-                            <Image
-                                objectFit="none"
-                                alt={userLogin?.name}
-                                // src={BgProfile2}
-                                src={`${serverStaticDir}${userLogin?.profilePhoto.url}`}
-                                layout="fill"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ProfileHero />
 
             <div className="text-center">
                 <h1 className="m-0 text-[36px] lg:text-[48px] font-semibold text-gray-800  capitalize font-moonRocks">{userLogin?.name}</h1>
@@ -174,7 +51,10 @@ export default function Profile({ userData }) {
                         {userLogin?.bio}
                     </p>
                 }
-                <Button onClick={() => router.push("/editProfile")}>
+                <Button
+                    show={true}
+
+                    onClick={() => router.push("/editProfile")}>
                     Edit Profile
                 </Button>
             </div>
@@ -182,64 +62,42 @@ export default function Profile({ userData }) {
             <div className="p-2 my-4 text-center rounded-2xl bg-slate-500">
                 <h2 className="text-lg font-semibold ">Characters created</h2>
                 <div className="flex flex-col flex-wrap items-center justify-center gap-4 p-4 lg:flex-row lg:justify-between ">
+
+                    <ListCardCharacters
+                        show={charactersUsers && !spinner}
+                        charactersUsers={charactersUsers}
+                    />
+
+                    <Spinner show={spinner} />
+
                     {
-                        (charactersUsers && !spinner)
-                            ? charactersUsers.map(character =>
-                                <div
-                                    className="relative box-content group cursor-pointer px-1 py-2 bg-[#fcfcfc] w-[200px] h-[250px] rounded-md shadow-md flex flex-col justify-center items-center"
-                                    key={character.id}
-                                >
-                                    <span className="self-start p-2 font-light text-">{character?.name}</span>
-
-
-                                    <div
-                                        style={(character?.avatar?.style?.backgroundColor === "") ? { backgroundColor: "inherit" } : character?.avatar.style}
-                                        className="relative w-[180px] h-[230px] rounded-md mb-2 shadow-md"
-                                    >
-
-                                        <Image
-                                            objectFit="cover"
-                                            alt={"bg profile"}
-                                            src={`${serverStaticDir}${character?.avatar.url}`}
-                                            layout="fill"
-                                        />
-                                    </div>
-                                    <div className="p-2 flex justify-center items-center gap-2 flex-wrap rounded-t-[10%] transition-height duration-300 animate-appear-below opacity-0 group-hover:opacity-100 group-hover:h-[40%]  w-full h-[0%] absolute bottom-0 left-0 bg-amber-200 border-t-2 border-neutral-900">
-                                        <div
-                                            onClick={() => { setShowModal(true); setCharacterSelected({ character, action: "delete" }) }}
-                                            className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🚫 Delete</div>
-                                        <div
-                                            onClick={() => { setShowModal(true); setCharacterSelected({ character, action: "modify" }) }}
-                                            className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">⚙️ Modify</div>
-                                        <div
-                                            onClick={() => { setModalViewAvatar(true); setCharacterSelected({ character, action: "" }) }}
-                                            className="px-4 py-1 text-sm text-white rounded-lg hover:scale-105 bg-slate-900">🖥️ View</div>
-                                    </div>
-
-                                </div>
-                            )
-                            : spinner
-                                ? <p>Loading</p>
-                                : <p>You havent created any characters yet</p>
+                        !spinner && !charactersUsers &&
+                        <p>You havent created any characters yet</p>
 
                     }
+
                 </div>
             </div>
 
-            {userLogin && (userLogin.quantityCharacters < 3)
-                &&
-                <Button onClick={() => router.push("/addcharacter")}>Add character</Button>
+            <Button
+                show={(userLogin?.quantityCharacters < 3)}
+                onClick={() => router.push("/addcharacter")}
+            >
+                Add character
+            </Button>
 
-            }
+            <ModalConfirm
+                show={modalConfirm}
+                title={titleModal}
+                onConfirm={handleOperationsCharacter}
+                onCancel={() => dispatch({ type: "@modalConfirm/reset" })}
+            />
 
-            {
-                modal &&
-                <ModalConfirm title={titleModal} onConfirm={handleOperationsCharacter} onCancel={() => setShowModal(false)} />
-            }
-
-            {
-                modalViewAvatar && characterSelected && <ModalViewAvatar onExit={() => setModalViewAvatar(false)} character={characterSelected.character} />
-            }
+            <ModalViewAvatar
+                show={modalViewAvatar && character}
+                onExit={() => dispatch({ type: "@viewModal/reset" })}
+                character={character}
+            />
 
         </div>
     )

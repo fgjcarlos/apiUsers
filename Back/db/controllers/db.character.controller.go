@@ -31,10 +31,6 @@ func ReadCharacter(filter primitive.M) (models.Character, error) {
 
 	err := collectionCharacters.FindOne(ctxCharacter, filter).Decode(&Character)
 
-	if err != nil {
-		return Character, err
-	}
-
 	return Character, err
 }
 

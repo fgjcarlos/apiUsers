@@ -68,7 +68,10 @@ export default function UploadAvatar() {
                     onChange={inputChange}
                     multiple={true}
                 />
-                <Button onClick={onClick}>Upload</Button>
+                <Button 
+        show={true}
+                
+                onClick={onClick}>Upload</Button>
                 <Toaster />
             </form>
         </div>

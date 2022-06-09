@@ -53,7 +53,7 @@ export default function Register({profilePhoto}) {
     return (
         <div className="flex flex-col items-center justify-center gap-8 p-8 ">
             <h1 className="text-xl font-bold capitalize ">Register</h1>
-            <FormUser onSubmit={handleSubmit} typeForm={"register"} profilesPhoto={profilePhoto.profilePhotos} />
+            <FormUser onSubmit={handleSubmit} typeForm={"register"} profilesPhoto={profilePhoto.profilePhotos} show={true}/>
         </div>
     )
 }

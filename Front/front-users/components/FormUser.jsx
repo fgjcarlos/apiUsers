@@ -10,16 +10,25 @@ import { serverHost, serverStaticDir } from "utils/globalVars";
 import Button from "./Button";
 import { ChooseAvatar } from "./ChooseAvatar";
 import Modal from "./Modal";
+// RESOURCES    
+import DefaultImgProfile from 'public/avatarDefault.png'
+import { useEffect } from "react";
 
-export default function FormUser({ onSubmit, typeForm, initialValues, profilesPhoto }) {
+export default function FormUser({ onSubmit, typeForm, initialValues, profilesPhoto, show }) {
 
     const urlNamesUser = `${serverHost}/user/all`;
     const [countCharacters, setCountCharacters] = useState(0);
     const [profilePhoto, setProfilePhoto] = useState(initialValues?.profilePhoto ?? null)
     const [showModal, setShowModal] = useState(false)
+    const imgDefaultRegister = initialValues?.profilePhoto?.url ? `${serverStaticDir}${profilePhoto?.url}` : DefaultImgProfile
 
-    // console.log('%cDEBUG:', 'color: #ff25e2; background: #1d1b1b; padding: 2px;', {profilesPhoto});
+    useEffect(() => {
+        if (initialValues && show) {
+                setProfilePhoto(initialValues.profilePhoto)
+        }
+    }, [show, initialValues]);
 
+    if (!show) return null;
 
     return (
         <div className="w-[90%] lg:w-[40%]  bg-slate-100 p-4 rounded-lg shadow-lg">
@@ -61,7 +70,7 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
             <Formik
                 initialValues={{
                     name: initialValues?.name || "",
-                    password:"",
+                    password: "",
                     bio: initialValues?.bio || "",
                     rol: "user",
                 }}
@@ -80,17 +89,17 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
                             users
                         } = await response.json();
 
-                       if (typeForm === "register" && users && users.find(user => user.name === values.name)) {
+                        if (typeForm === "register" && users && users.find(user => user.name === values.name)) {
                             // if the name is already in the db
                             errors.name = "* The name is already in the db.";
                         }
 
-                        if(typeForm === "edit" && users && users.find(user => (user.name === values.name) && (values.name !== initialValues.name))) {
+                        if (typeForm === "edit" && users && users.find(user => (user.name === values.name) && (values.name !== initialValues.name))) {
                             // if the name is already in the db
                             errors.name = "* The name is already in the db.";
                         }
 
-                        
+
 
                     }
 
@@ -111,32 +120,35 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
                     isSubmitting
                 }) => <Form className="flex flex-col gap-4 " autoComplete="false">
 
-                         {
-                            typeForm !== "login" && 
-                        <div className="flex flex-col items-center justify-center gap-4">
-                            <div className="rounded-[50%] relative h-[150px] w-[150px] bg-zinc-400">
-                                <Image
-                                    // lazyRoot={lazyRoot}
-                                    className="text-sm text-center"
-                                    objectFit="contain"
-                                    alt="Profile photo"
-                                    src={`${serverStaticDir}${profilePhoto?.url}`}
-                                    // lazyBoundary="200px"
-                                    layout="fill"
-                                />
+                        {
+                            typeForm !== "login" &&
+                            <div className="flex flex-col items-center justify-center gap-4">
+                                <div className="rounded-[50%] relative h-[150px] w-[150px] bg-white">
+                                    <Image
+                                        // lazyRoot={lazyRoot}
+                                        className="text-sm rounded-[50%]"
+                                        objectFit="contain"
+                                        alt="Profile photo"
+                                        src={imgDefaultRegister}
+                                        // lazyBoundary="200px"
+                                        layout="fill"
+                                    />
+                                </div>
+
+                                <Button 
+                                show={true}
+                                onClick={e => {
+                                    e.preventDefault()
+                                    setShowModal(true)
+                                }}
+                                >
+                                    Select photo
+                                </Button>
+
                             </div>
 
-                            <Button onClick={e => {
-                                e.preventDefault()
-                                setShowModal(true)
-                            }}>
-                                Select photo
-                            </Button>
 
-                        </div>
-
-
-                }
+                        }
 
                         <div className="p-2">
                             <label className="block mb-2 font-bold" htmlFor="name">
@@ -148,7 +160,7 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
                         </div>
 
 
-{          typeForm !== "login" &&               <div className="p-2">
+                        {typeForm !== "login" && <div className="p-2">
                             <label className="block mb-2 font-bold " htmlFor="bio">
                                 Bio
                             </label>
@@ -175,7 +187,7 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
 
 
                         {
-                        typeForm !== "edit" &&
+                            typeForm !== "edit" &&
                             <div className="p-2">
                                 <label className="block mb-2 font-bold" htmlFor="password">
                                     Password
@@ -184,7 +196,7 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
                                 <ErrorMessage className='mt-1 text-sm text-red-600 ' name="password" component="div" />
 
                             </div>
-                            }
+                        }
 
                         <button className="self-center my-6 text-white bg-blue-600 border-none rounded-md cursor-pointer hover:bg-blue-700 w-28 h-9" type="submit" disabled={isSubmitting}>
                             Submit

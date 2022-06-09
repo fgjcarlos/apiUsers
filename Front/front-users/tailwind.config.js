@@ -27,10 +27,15 @@ module.exports = {
         '50%': { transform: 'h-[55%]' },
         '60%': { transform: 'h-[70%])' },
         '100%': { transform: 'h-[100%]' },
+      },
+      spin:{
+        'from': { transform: 'rotate(0deg)' },
+        'to': { transform: 'rotate(360deg)' },
       }
     },
     animation: {
       'appear-below': 'appearBelow 2s ease-in-out',
+      'spin': 'spin 1s linear infinite',
     },
     transitionProperty: {
       'height': 'height'
