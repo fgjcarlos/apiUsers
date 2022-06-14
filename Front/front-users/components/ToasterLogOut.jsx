@@ -7,10 +7,8 @@ export default function ToasterLogout({ t }) {
 
     const dispatch = useDispatch();
     const router = useRouter();
-    
-    const handleLogOut = (t) => {
-        console.log("LogOut");
 
+    const handleLogOut = (t) => {
         toast.dismiss(t.id);
 
         setTimeout(() => {
@@ -22,11 +20,8 @@ export default function ToasterLogout({ t }) {
     }
 
     return (
-        <>
-            <div
-                className={`${t.visible ? "animate-enter" : "animate-leave"
-                    } max-w-md w-full mt-4  bg-slate-500 overflow-hidden shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-            >
+        
+            <div className={`${t.visible ? "animate-enter" : "animate-leave"} max-w-md w-full mt-4  bg-slate-500 overflow-hidden shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
                 <div className="flex-1 w-0 p-4">
                     <div className="flex items-start">
                         <div className="flex-1 ml-3">
@@ -60,6 +55,5 @@ export default function ToasterLogout({ t }) {
                     </button>
                 </div>
             </div>
-        </>
     )
 }

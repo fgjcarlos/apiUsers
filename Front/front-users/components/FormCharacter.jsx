@@ -68,7 +68,7 @@ export default function FormCharacter({ handleSubmit, formRef, initialValues, av
                         interests: initialValues?.interests || "",
                         gender: initialValues?.gender || "",
                         biography: initialValues?.biography || "",
-                        avatar: initialValues.avatar || "",
+                        avatar: initialValues?.avatar || "",
                     }
                 }
                 validate={values => {
@@ -124,9 +124,9 @@ export default function FormCharacter({ handleSubmit, formRef, initialValues, av
                             >
 
                                 {
-                                    storeAvatar || initialValues.avatar
+                                    storeAvatar || initialValues?.avatar
                                         ? <div className='w-40 h-48'>
-                                            <Avatar avatar={storeAvatar || initialValues.avatar } />
+                                            <Avatar avatar={storeAvatar || initialValues?.avatar } />
                                         </div>
                                         : <Image alt='avatar-default' src={AvatarDefault} width={150} height={150} />
                                 }

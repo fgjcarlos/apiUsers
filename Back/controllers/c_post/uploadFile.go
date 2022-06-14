@@ -1,6 +1,7 @@
 package c_post
 
 import (
+	db "apiBack/db/controllers"
 	"apiBack/db/models"
 	"apiBack/services/post"
 	"apiBack/utils"
@@ -22,12 +23,22 @@ func UploadFile(c *gin.Context) {
 	form, _ := c.MultipartForm()
 	files := form.File["files[]"]
 
+	fmt.Println("paso 1")
+	fmt.Println("typeFile: ", typeFile)
+
 	if len(files) <= 0 {
 		c.JSON(400, gin.H{
 			"message": "No files",
 		})
 		return
 	}
+
+	dirToCheck := fmt.Sprintf("./media/%s", dir)
+
+	// ## Create a directory if not exist
+	utils.CreateDirIfNotExist(dirToCheck)
+
+	fmt.Println("paso 2")
 
 	for _, file := range files {
 
@@ -43,10 +54,6 @@ func UploadFile(c *gin.Context) {
 		// ###  Set url to save in local and access by remote url
 		urlDir := fmt.Sprintf("/%s/%s", dir, newFileName)
 		urlDirSave := fmt.Sprintf("./media/%s", urlDir)
-		dirToCheck := fmt.Sprintf("./media/%s", dir)
-
-		// ## Create a directory if not exist
-		utils.CreateDirIfNotExist(dirToCheck)
 
 		// #### Upload to disk
 		errSave := c.SaveUploadedFile(file, urlDirSave)
@@ -63,8 +70,18 @@ func UploadFile(c *gin.Context) {
 		switch typeFile {
 		case "avatar":
 
+			// Save in DB
+			avatarID, err := db.GenerateAavatarsID()
+
+			if err != nil {
+				c.JSON(500, gin.H{
+					"message": "Fail to generate avatar id",
+				})
+				return
+			}
 			// # Create new avatar
 			newAvatar := models.Avatar{
+				ID:        avatarID,
 				Name:      newFileName,
 				Url:       urlDir,
 				CreatedAt: time.Now(),
@@ -74,12 +91,15 @@ func UploadFile(c *gin.Context) {
 			// # Save to db
 			errDb = post.AddAvatar(newAvatar)
 		case "profilePhoto":
+
 			newPrifilePhoto := models.ProfilePhoto{
 				Name:      newFileName,
 				Url:       urlDir,
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
 			}
+
+			fmt.Println("in profilePhoto")
 
 			errDb = post.AddProfilePhoto(newPrifilePhoto)
 

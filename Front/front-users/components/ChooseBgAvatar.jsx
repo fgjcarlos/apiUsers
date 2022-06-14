@@ -6,7 +6,7 @@ import { RgbaColorPicker } from "react-colorful";
 import { Avatar } from "./Avatar";
 import Button from "./Button";
 
-export default function ChooseBgAvatar({ show, handleChooseAvatar, onDone }) {
+export default function ChooseBgAvatar({ show=true, handleChooseAvatar, onDone }) {
 
     const [color, setColor] = useState({ r: 255, g: 255, b: 255, a: 1 });
     const storeAvatar = useSelector((s) => s.avatar);

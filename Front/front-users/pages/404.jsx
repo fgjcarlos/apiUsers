@@ -8,12 +8,9 @@ export default function Custom404() {
     <div className="flex flex-col items-center justify-center gap-8 p-8">
       <div className="relative w-[300px] h-[500px]">
         <Image
-          //lazyRoot={lazyRoot}
           objectFit="contain"
           alt={'404'}
           src={Img404}
-          //lazyBoundary="200px"
-          // layout="fill"
         />
       </div>
 

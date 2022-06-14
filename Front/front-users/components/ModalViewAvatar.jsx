@@ -3,7 +3,7 @@ import Image from "next/image";
 import { serverStaticDir } from "utils/globalVars";
 import Button from "./Button";
 
-export default function ModalViewAvatar({ show, onExit, character }) {
+export default function ModalViewAvatar({ show=true, onExit, character }) {
 
     if (!show) return null;
 

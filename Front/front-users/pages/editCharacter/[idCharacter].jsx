@@ -12,31 +12,27 @@ import { throwErrorToast, throwLoadingToast, throwSuccessToast } from "utils/toa
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import Spinner from "components/Spinner";
+import { useProfile } from "hooks/useProfile";
+import { getAvatars } from "services/avatars";
+import { getCharacter, getCharacters, modifyCharacter } from "services/characters";
 
 export default function EditCharacter(props) {
-
-
     const { avatars, character } = props
 
     dayjs.extend(utc)
 
     const dispatch = useDispatch();
     const formRef = useRef();
-    // const character = useSelector(state => state.character);
-    // const [character, setCharacter] = useState(null);
+    const [,,,setUpdateUser] = useProfile()
     const storeAvatar = useSelector((s) => s.avatar);
     const user = useSelector((s) => s.login);
     const router = useRouter()
 
-
-    console.log("avatars", avatars);
-
     useEffect(() => {
         if (character) {
-            // dispatch({ type: "@avatar/set", payload: character.avatar })
+             dispatch({ type: "@avatar/set", payload: character.avatar })
         }
     }, [character]) // eslint-disable-line
-
 
     const handleSubmit = async (values) => {
 
@@ -55,32 +51,25 @@ export default function EditCharacter(props) {
 
         const toastLoading = throwLoadingToast("Uploading data... Wait please.")
 
-        const urlServer = `${serverHost}/character/modify`
-        const response = await fetch(urlServer, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({ ...characterModified }),
-        });
+
+        const resFetchModifyCharacter = await modifyCharacter(characterModified) 
 
         toast.dismiss(toastLoading);
 
-        if (response.ok) {
-            throwSuccessToast("The character has been added successfully.", 5000)
+        if (resFetchModifyCharacter.ok) {
+            throwSuccessToast("The character has been added successfully.", 2000)
             setTimeout(() => {
                 router.push("/profile")
             }, 1000);
         } else {
-            throwErrorToast("An error has occurred.", 6000)
+            throwErrorToast("An error has occurred.", 3000)
         }
 
         // Reset modal confirm edit
         dispatch({ type: "@modalConfirm/reset" })
+        setUpdateUser(true)
 
     }
-
 
     if (!character) return <Spinner />;
 
@@ -108,14 +97,9 @@ export default function EditCharacter(props) {
 
 export async function getStaticProps({ params }) {
 
-    const [responseAvatars, characterResponse] = await Promise.all([
-        fetch(`${serverHost}/avatar/all`),
-        fetch(`${serverHost}/character/${params.idCharacter}`),
-    ]);
-
     const [avatarsJson, characterJson] = await Promise.all([
-        responseAvatars.json(),
-        characterResponse.json()
+        getAvatars(),
+        getCharacter(params.idCharacter),
     ]);
 
     return {
@@ -126,11 +110,9 @@ export async function getStaticProps({ params }) {
     }
 }
 
-// This function gets called at build time
 export async function getStaticPaths() {
 
-    const res = await fetch(`${serverHost}/character/all`)
-    const { characters } = await res.json()
+    const { characters } = await getCharacters();
 
     // Get the paths we want to pre-render based on posts
     const paths = characters.map((character) => ({

@@ -16,11 +16,11 @@ func GetCollection(collection string) *mongo.Collection {
 
 	//load env
 
-	pathEnvFile := "/home/fgjcarlos/Escritorio/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
-	errDotenv := godotenv.Load(pathEnvFile)
+	// pathEnvFile := "/home/fgjcarlos/Escritorio/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
+	errDotenv := godotenv.Load(".env")
 
 	if errDotenv != nil {
-		log.Fatal("Error loading .env file")
+		log.Fatal("Error loading .env file db")
 	}
 
 	var MONGO_HOST = os.Getenv("MONGO_HOST")

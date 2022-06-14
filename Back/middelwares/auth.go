@@ -5,6 +5,7 @@ import (
 	"apiBack/services/get"
 	"apiBack/validators"
 	"os"
+	"strings"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -17,6 +18,7 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 
 	var secretKey = os.Getenv("SECRET_KEY")
 	var identityKey = "_id"
+	var rol = "rol"
 
 	// # Create the JWT middleware
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
@@ -29,6 +31,7 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 			if v, ok := data.(*models.User); ok {
 				return jwt.MapClaims{
 					identityKey: v.ID.Hex(),
+					rol:         v.Rol,
 				}
 			}
 			return jwt.MapClaims{}
@@ -37,9 +40,11 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 			claims := jwt.ExtractClaims(c)
 
 			oid, _ := primitive.ObjectIDFromHex(claims[identityKey].(string))
+			rol, _ := claims[rol].(string)
 
 			return &models.User{
-				ID: oid,
+				ID:  oid,
+				Rol: rol,
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -81,6 +86,7 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 				return &models.User{
 					ID:   userDB.ID,
 					Name: userDB.Name,
+					Rol:  userDB.Rol,
 				}, nil
 			}
 
@@ -92,13 +98,13 @@ func Jwt() (*jwt.GinJWTMiddleware, error) {
 
 			// ** If url path user, rol user and ok,  return true, also check key user
 
-			// && (strings.Split(c.Request.URL.Path, "/")[1]) == "user"
+			pathReq := strings.Split(c.Request.URL.Path, "/")[1]
 
-			if ok {
+			if ok && v.Rol == "admin" {
 				return true
 			}
 
-			if ok && v.Name == "admin" {
+			if ok && (pathReq == "user") || (pathReq == "character") {
 				return true
 			}
 

@@ -89,32 +89,27 @@ func DeleteCharacter(filter primitive.M) error {
 // Get amount of Characters and sum 1 for ID
 func GenerateID() (int, error) {
 
+	// var Characters models.Characters
 	var Characters models.Characters
 
 	filter := bson.D{}
 
 	options := options.Find().SetSort(bson.D{{"_id", -1}}).SetLimit(1)
 
-	// amountCharacters, err := collectionCharacters.CountDocuments(ctxCharacter, filter)
 	cur, err := collectionCharacters.Find(ctxCharacter, filter, options)
 
 	if err != nil {
 		return 0, err
 	}
 
-	for cur.Next(ctxCharacter) {
-
-		var Character u.Character
-		_ = cur.Decode(&Character)
-
-		if err != nil {
-			return 0, err
-		}
-
-		Characters = append(Characters, &Character)
+	if err = cur.All(ctxCharacter, &Characters); err != nil {
+		return 0, err
 	}
 
-	lastCharacterID := Characters[0].ID
+	if len(Characters) == 0 {
+		return 1, nil
+	} else {
+		return Characters[0].ID + 1, nil
+	}
 
-	return int(lastCharacterID + 2), nil
 }

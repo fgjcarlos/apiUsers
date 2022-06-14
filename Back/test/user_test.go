@@ -5,6 +5,7 @@ import (
 	"apiBack/services/delete"
 	"apiBack/services/get"
 	"apiBack/services/post"
+	"os"
 	"testing"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -14,11 +15,14 @@ var userID primitive.ObjectID
 
 func TestCreateUser(t *testing.T) {
 
+	var PASSWORD_ADMIN = os.Getenv("PASSWORD_ADMIN")
+
 	user := models.User{
-		Name:               "JositoMaria",
-		Password:           "123456",
-		Key:                "123456",
-		QuantityCharacters: 2,
+		Rol:                "admin",
+		Name:               "Admin",
+		Password:           PASSWORD_ADMIN,
+		Key:                PASSWORD_ADMIN,
+		QuantityCharacters: 0,
 	}
 
 	err := post.AddUser(user)

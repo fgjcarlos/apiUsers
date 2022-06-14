@@ -21,8 +21,8 @@ import (
 func main() {
 
 	// Load var env
-	pathEnvFile := "/home/fgjcarlos/Escritorio/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
-	errDotenv := godotenv.Load(pathEnvFile)
+	// pathEnvFile := "/home/fgjcarlos/MEGAsync/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
+	errDotenv := godotenv.Load(".env")
 
 	if errDotenv != nil {
 		log.Fatal("Error loading .env file")
@@ -61,7 +61,7 @@ func main() {
 
 	// *Group of uploads, endpoint "UPLOAD"
 	// TODO --> Add a middelware type acces key
-	r.POST("/upload", c_post.UploadFile)
+	r.POST("/upload", mwAuth.MiddlewareFunc(), c_post.UploadFile)
 
 	// *Endpoint "profilePhoto"
 	profilePhotoGroup := r.Group("/profilePhoto")

@@ -12,6 +12,7 @@ import "swiper/css/navigation";
 // COMPONENTS
 import SectionCarousel from 'components/SectionCarousel';
 import { serverHost } from 'utils/globalVars';
+import { getCharacters } from 'services/characters';
 
 
 export default function Home({characters}) {
@@ -171,14 +172,11 @@ export default function Home({characters}) {
 
 export async function getStaticProps() {
   //Get external data from the file system, API, DB, etc.
-  const response = await fetch(`${serverHost}/character/all`)
 
   // TODO-> paginacion
 
-  const characters = await response.json() 
+  const characters = await getCharacters()
 
-  // The value of the `props` key will be
-  //  passed to the `Home` component
   return {
     props: characters,
   }

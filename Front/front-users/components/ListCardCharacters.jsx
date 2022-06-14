@@ -8,7 +8,6 @@ export default function ListCardCharacters({ show, charactersUsers }) {
     return (
         charactersUsers.map(character =>
             <CardCharacter
-                show={true}
                 key={character.id}
                 character={character}
             />

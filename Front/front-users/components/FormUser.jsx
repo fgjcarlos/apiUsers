@@ -8,13 +8,12 @@ import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { serverHost, serverStaticDir } from "utils/globalVars";
 import Button from "./Button";
-import { ChooseAvatar } from "./ChooseAvatar";
 import Modal from "./Modal";
 // RESOURCES    
 import DefaultImgProfile from 'public/avatarDefault.png'
 import { useEffect } from "react";
 
-export default function FormUser({ onSubmit, typeForm, initialValues, profilesPhoto, show }) {
+export default function FormUser({ onSubmit, typeForm, initialValues, profilesPhoto, show=true }) {
 
     const urlNamesUser = `${serverHost}/user/all`;
     const [countCharacters, setCountCharacters] = useState(0);
@@ -111,7 +110,6 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
                 }}
                 onSubmit={values => {
                     values.profilePhoto = profilePhoto
-
                     onSubmit(values)
                 }}
                 onChange={(e) => { console.log(e) }}

@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 // RESOURCES
 import { serverStaticDir } from "utils/globalVars";
 
-export default function CardCharacter({ show, character }) {
+export default function CardCharacter({ show=true, character }) {
 
     const dispatch = useDispatch();
 
@@ -30,7 +30,7 @@ export default function CardCharacter({ show, character }) {
     return (
 
         <div className="relative box-content group cursor-pointer px-1 py-2 bg-[#fcfcfc] w-[200px] h-[250px] rounded-md shadow-md flex flex-col justify-center items-center">
-            <span className="self-start p-2 font-light text-">
+            <span className="self-start p-2 font-light capitalize">
                 {character?.name}
             </span>
 

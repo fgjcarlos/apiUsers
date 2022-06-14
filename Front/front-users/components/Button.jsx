@@ -1,4 +1,4 @@
-const Button = ({ show, children, onClick, classButton, state }) => {
+const Button = ({ show=true, children, onClick, classButton, state }) => {
 
     const opacity = state ? 'opacity-40' : ''
 

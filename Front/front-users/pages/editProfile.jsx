@@ -11,6 +11,8 @@ import { serverHost } from "utils/globalVars";
 // HOOKS
 import useLogin from "hooks/useLogin";
 import Spinner from "components/Spinner";
+import { getUser, userRegister } from "services/users";
+import { getProfilePhotos } from "services/profilePhoto";
 
 
 export default function EditProfile({ profilePhoto }) {
@@ -18,29 +20,15 @@ export default function EditProfile({ profilePhoto }) {
     // const user = useSelector(state => state.login);
     const router = useRouter();
     const dispatch = useDispatch();
-
     const [userEdit, setUserEdit] = useState(null)
-
-    const urlRegister = `${serverHost}/user/update_profile`;
-
 
     useEffect(() => {
 
         const fetchUserInfo = async () => {
 
-            const urlInfo = `${serverHost}/user/info`;
+            const user = await getUser()
 
-            const response = await fetch(urlInfo, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                method: "GET",
-            });
-
-            const { user } = await response.json();
-
-            if (response.ok && user) {
+            if (user) {
                 setUserEdit(user);
             }
         }
@@ -60,14 +48,7 @@ export default function EditProfile({ profilePhoto }) {
 
         const toastLoading = throwLoadingToast("Uploading data... Wait please.")
 
-        const response = await fetch(urlRegister, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            method: "PATCH",
-            body: JSON.stringify({ ...values }),
-        });
+        const response = await userRegister(values)
 
         toast.dismiss(toastLoading);
 
@@ -75,21 +56,13 @@ export default function EditProfile({ profilePhoto }) {
             throwSuccessToast("User edited successfully.", 2000)
             // Login
             setTimeout(async () => {
-                // set Login and redirect home page
-                //setValues(values)
                 dispatch({ type: "login", payload: values });
                 router.push("/profile", null, { shallow: true });
             }, 1000);
         } else {
-            throwErrorToast("Error creating user.", 10000)
+            throwErrorToast("Error creating user.", 3000)
         }
     }
-
-    // if (!userEdit) {
-    //     return "Loading ...";
-    // }
-
-    console.log("user", userEdit);
 
     return (
         <div className='flex flex-col items-center justify-center p-8 '>
@@ -110,8 +83,7 @@ export default function EditProfile({ profilePhoto }) {
 
 export async function getStaticProps() {
 
-    const response = await fetch(`${serverHost}/profilePhoto/all`);
-    const profilePhoto = await response.json();
+    const profilePhoto = await getProfilePhotos();
 
     return {
         props: {

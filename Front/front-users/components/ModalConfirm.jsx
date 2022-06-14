@@ -1,6 +1,6 @@
 import Button from "./Button";
 
-export default function ModalConfirm({ show, title, message, onConfirm, onCancel }) {
+export default function ModalConfirm({ show=true, title, message, onConfirm, onCancel }) {
 
     if (!show) return null;
 

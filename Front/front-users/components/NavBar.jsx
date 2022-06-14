@@ -17,8 +17,6 @@ function Navbar() {
     const [dropDownProfle, setDropDownProfile] = useState(false)
     const login = useSelector(state => state.login, shallowEqual);
 
-    const dispatch = useDispatch();
-    
     console.log("reload Navbar")
 
     useCheckSession()
@@ -33,8 +31,8 @@ function Navbar() {
             name: "Guide",
         },
         {
-            endPoint: "/uploadAvatar",
-            name: "Upload Avatar",
+            endPoint: "/uploadFiles",
+            name: "Upload files",
         },
     ]
 

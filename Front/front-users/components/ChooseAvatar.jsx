@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import ListAvatars from "./ListAvatars";
 import Button from './Button'
 
-export function ChooseAvatar({ show, avatars, onDone, onExit }) {
+export function ChooseAvatar({ show=true, avatars, onDone, onExit }) {
 
     const storeAvatar = useSelector((s) => s.avatar);
 

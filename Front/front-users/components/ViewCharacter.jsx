@@ -7,11 +7,9 @@ import Button from "./Button"
 //RESOURCES
 import { serverStaticDir } from "utils/globalVars"
 
-export default function ViewCharacter({ show, character, onExit }) {
-
+export default function ViewCharacter({ show=true, character, onExit }) {
 
     dayjs.extend(customParseFormat)
-
 
     if (!show) return null
 

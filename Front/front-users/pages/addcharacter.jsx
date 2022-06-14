@@ -1,23 +1,16 @@
 // DEPENDENCIES
-import { useState, useRef, useEffect } from 'react'
+import {  useRef, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import Image from "next/image";
-import { Formik, Field, ErrorMessage, Form } from "formik";
 import toast, { Toaster } from 'react-hot-toast';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import { useRouter } from 'next/router';
 // COMPONENTS
-import ChooseBgAvatar from '../components/ChooseBgAvatar';
-import Modal from '../components/Modal';
-import Button from "components/Button";
-import { Avatar } from 'components/Avatar';
-import { ChooseAvatar } from './../components/ChooseAvatar';
 // RESOURCES
-import AvatarDefault from 'public/avatarDefault.png'
 import { throwErrorToast, throwLoadingToast, throwSuccessToast } from 'utils/toast';
-import { serverHost } from 'utils/globalVars';
 import FormCharacter from 'components/FormCharacter';
+import { getAvatars } from 'services/avatars';
+import { createCharacter } from 'services/characters';
 
 export default function Addcharacter(props) {
 
@@ -35,13 +28,9 @@ export default function Addcharacter(props) {
         dispatch({ type: "@avatar/reset" })
     }, []) // eslint-disable-line
 
-
-
     const handleSubmit = async (values, { setSubmitting }) => {
 
         if (!storeAvatar) return
-
-        const urlServer = `${serverHost}/character/add`
 
         const character = {
             ...values,
@@ -57,21 +46,14 @@ export default function Addcharacter(props) {
 
         const toastLoading = throwLoadingToast("Uploading data... Wait please.")
 
-        const response = await fetch(urlServer, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-            body: JSON.stringify({ ...character }),
-        });
+        const response = await createCharacter(character)
 
         toast.dismiss(toastLoading)
 
         // *Reset form and avatar
         if (response.ok) {
-            
-            throwSuccessToast("The character has been added successfully.", 10000)
+        
+            throwSuccessToast("The character has been added successfully.", 2000)
 
             setTimeout(() => {
                 formRef.current.reset()
@@ -79,7 +61,7 @@ export default function Addcharacter(props) {
                 router.push("/profile")
             }, 2000);
         }else {
-            throwErrorToast("An error has occurred.", 6000)
+            throwErrorToast("An error has occurred.", 2000)
         }
 
     }
@@ -107,15 +89,10 @@ export default function Addcharacter(props) {
 
 }
 
-
 export async function getStaticProps() {
-    // Get external data from the file system, API, DB, etc.
-    let response = await fetch(`${serverHost}/avatar/all`)
 
-    let avatars = await response.json()
+    const avatars = await getAvatars()
 
-    // The value of the `props` key will be
-    //  passed to the `Home` component
     return {
         props: avatars,
     }
