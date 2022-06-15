@@ -33,7 +33,9 @@ export default function Profile() {
     // TODO--> debug print
     // console.log("maxCharacter", maxCharacter);
 
-    if (!loaded) return <Spinner />
+    if (!loaded || !userLogin) return <Spinner />
+
+    // console.log(userLogin);
 
     return (
         <div className='lg:w-[80%] box-content mx-auto p-4'>
@@ -51,12 +53,20 @@ export default function Profile() {
                         {userLogin?.bio}
                     </p>
                 }
-                <Button
-                    show={true}
 
-                    onClick={() => router.push("/editProfile")}>
-                    Edit Profile
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                    <Button onClick={() => router.push("/editProfile")}                >
+                        Edit Profile
+                    </Button >
+
+                    <Button
+                        show={userLogin?.rol === "admin"}
+                        onClick={() => router.push("/uploadFiles")}
+                    >
+                        Upload files
+                    </Button>
+                </div>
+
             </div>
 
             <div className="p-2 my-4 text-center rounded-2xl bg-slate-500">

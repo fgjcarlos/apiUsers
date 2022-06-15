@@ -10,9 +10,12 @@ import MenuHam from 'public/menuHamb.svg'
 import AvatarDefault from 'public/avatarDefault.png'
 // RESOURCES
 import { toasterLogOut } from 'utils/toast'
+import useIsMounted from 'hooks/useIsMounted'
+import Spinner from './Spinner'
 
 function Navbar() {
 
+    const [loaded] = useIsMounted()
     const [menuBtn, setMenuBtn] = useState(false)
     const [dropDownProfle, setDropDownProfile] = useState(false)
     const login = useSelector(state => state.login, shallowEqual);
@@ -21,18 +24,12 @@ function Navbar() {
 
     useCheckSession()
 
-    const handleLogOut = async () => {
-        toasterLogOut()
-    }
+    if (!loaded) return <Spinner />
 
     const links = [
         {
             endPoint: "/guide",
             name: "Guide",
-        },
-        {
-            endPoint: "/uploadFiles",
-            name: "Upload files",
         },
     ]
 
@@ -73,7 +70,7 @@ function Navbar() {
                             </Link>
                         )}
 
-                        {login
+                        {login && loaded
                             ?
                             <div className='relative'>
 
@@ -82,14 +79,15 @@ function Navbar() {
                                     onClick={() => setDropDownProfile(!dropDownProfle)}
                                 >
                                     <Image
-                                        objectFit="contain"
+                                        objectFit="cover"
                                         alt={login?.name}
                                         src={AvatarDefault}
-                                        width={30} height={30} />
+                                        width={25} height={25} />
+
+                                    {/* <span className='mr-1 text-base align-middle'>👤</span> */}
 
                                     <h1 className='font-semibold capitalize'>
                                         {login.name}
-                                        <span className='ml-2 text-xs align-middle' >⛛</span>
                                     </h1>
 
 
@@ -115,48 +113,48 @@ function Navbar() {
                                             </Link>
                                         </div>
 
-                                        <div onClick={handleLogOut} className="text-black cursor-pointer">
-                                            <span className='mr-2 text-lg'>📴</span>
-                                            <p className='inline-block px-4 py-1 rounded-xl hover:bg-slate-400 hover:text-gray-50 bg-slate-200 lg:bg-inherit'>
-                                                Logout
-                                            </p>
-                                        </div>
+                                        <div onClick={() => toasterLogOut()} className="text-black cursor-pointer">
+                                        <span className='mr-2 text-lg'>📴</span>
+                                        <p className='inline-block px-4 py-1 rounded-xl hover:bg-slate-400 hover:text-gray-50 bg-slate-200 lg:bg-inherit'>
+                                            Logout
+                                        </p>
+                                    </div>
                                     </div>
                                 }
 
-                            </div>
-                            :
-                            <div className='flex items-center gap-2 text-sm lg:text-base lg:px-4'>
-                                <Link href={"/login"}>
-                                    <a
-                                        className='p-2 bg-blue-200 rounded-xl hover:bg-blue-400 hover:text-gray-50 '
-                                        onClick={() => {
-                                            setMenuBtn(false)
-                                            setDropDownProfile(false)
-                                        }}
-                                    >
-                                        Login
-                                    </a>
-                                </Link>
-                                <Link href={"/register"}>
-                                    <a
-                                        className='p-2 bg-blue-300 rounded-xl hover:bg-blue-500 hover:text-gray-50 '
-                                        onClick={() => {
-                                            setMenuBtn(false)
-                                            setDropDownProfile(false)
-                                        }}
-                                    >
-                                        Register
-                                    </a>
-                                </Link>
-                            </div>
+                </div>
+                :
+                <div className='flex items-center gap-2 text-sm lg:text-base lg:px-4'>
+                    <Link href={"/login"}>
+                        <a
+                            className='p-2 bg-blue-200 rounded-xl hover:bg-blue-400 hover:text-gray-50 '
+                            onClick={() => {
+                                setMenuBtn(false)
+                                setDropDownProfile(false)
+                            }}
+                        >
+                            Login
+                        </a>
+                    </Link>
+                    <Link href={"/register"}>
+                        <a
+                            className='p-2 bg-blue-300 rounded-xl hover:bg-blue-500 hover:text-gray-50 '
+                            onClick={() => {
+                                setMenuBtn(false)
+                                setDropDownProfile(false)
+                            }}
+                        >
+                            Register
+                        </a>
+                    </Link>
+                </div>
                         }
 
-                    </nav>
-                </div>
-
-            </div>
+            </nav>
         </div>
+
+            </div >
+        </div >
 
     )
 }

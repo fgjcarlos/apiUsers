@@ -9,15 +9,13 @@ import FormUser from 'components/FormUser';
 // RESOURCES
 import { serverHost } from "utils/globalVars";
 // HOOKS
-import useLogin from "hooks/useLogin";
 import Spinner from "components/Spinner";
-import { getUser, userRegister } from "services/users";
+import { getUser, updateUser, userRegister } from "services/users";
 import { getProfilePhotos } from "services/profilePhoto";
 
 
 export default function EditProfile({ profilePhoto }) {
 
-    // const user = useSelector(state => state.login);
     const router = useRouter();
     const dispatch = useDispatch();
     const [userEdit, setUserEdit] = useState(null)
@@ -48,7 +46,7 @@ export default function EditProfile({ profilePhoto }) {
 
         const toastLoading = throwLoadingToast("Uploading data... Wait please.")
 
-        const response = await userRegister(values)
+        const response = await updateUser(values)
 
         toast.dismiss(toastLoading);
 

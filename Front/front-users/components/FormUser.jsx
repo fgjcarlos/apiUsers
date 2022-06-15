@@ -12,20 +12,29 @@ import Modal from "./Modal";
 // RESOURCES    
 import DefaultImgProfile from 'public/avatarDefault.png'
 import { useEffect } from "react";
+import { clDebug } from "utils/clDebug";
 
-export default function FormUser({ onSubmit, typeForm, initialValues, profilesPhoto, show=true }) {
+export default function FormUser({ onSubmit, typeForm, initialValues, profilesPhoto, show = true }) {
 
     const urlNamesUser = `${serverHost}/user/all`;
     const [countCharacters, setCountCharacters] = useState(0);
     const [profilePhoto, setProfilePhoto] = useState(initialValues?.profilePhoto ?? null)
     const [showModal, setShowModal] = useState(false)
-    const imgDefaultRegister = initialValues?.profilePhoto?.url ? `${serverStaticDir}${profilePhoto?.url}` : DefaultImgProfile
+    const [imgDefaultRegister, setImgDefaultRegister] = useState(initialValues?.profilePhoto?.url ? `${serverStaticDir}${profilePhoto?.url}` : DefaultImgProfile)
 
     useEffect(() => {
         if (initialValues && show) {
-                setProfilePhoto(initialValues.profilePhoto)
+            setProfilePhoto(initialValues.profilePhoto)
         }
     }, [show, initialValues]);
+
+    useEffect(() => {
+
+        if(profilePhoto){
+            setImgDefaultRegister(`${serverStaticDir}${profilePhoto?.url}`)
+        }
+
+    }, [profilePhoto, initialValues])
 
     if (!show) return null;
 
@@ -133,12 +142,12 @@ export default function FormUser({ onSubmit, typeForm, initialValues, profilesPh
                                     />
                                 </div>
 
-                                <Button 
-                                show={true}
-                                onClick={e => {
-                                    e.preventDefault()
-                                    setShowModal(true)
-                                }}
+                                <Button
+                                    show={true}
+                                    onClick={e => {
+                                        e.preventDefault()
+                                        setShowModal(true)
+                                    }}
                                 >
                                     Select photo
                                 </Button>

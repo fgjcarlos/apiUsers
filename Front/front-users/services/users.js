@@ -4,6 +4,7 @@ import {
     urlUserCharacters,
     urlUserRegister,
     urlUserLogin,
+    urlUserUpdate,
 } from "utils/globalVars";
 
 export const getUser = async() => {
@@ -47,14 +48,20 @@ export const deleteUserCharacter = async(id) => {
 
 export const userRegister = async(body) => {
     return await fetch(urlUserRegister, {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        method: "PATCH",
+        method: "POST",
         body: JSON.stringify({...body }),
     });
 };
+
+export const updateUser = async(body) => {
+    return await fetch(urlUserUpdate, {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({...body }),
+    });
+}
 
 export const userLogin = async(body) => {
     const res = await fetch(urlUserLogin, {

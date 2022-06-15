@@ -9,7 +9,8 @@ export const urlCharacterCreate = `${serverHost}/character/add`;
 export const urlUserInfo = `${serverHost}/user/info`;
 export const urlUserCharacters = `${serverHost}/user/characters/`;
 export const urlUserCharacter = `${serverHost}/user/character/`;
-export const urlUserRegister = `${serverHost}/user/update_profile`;
+export const urlUserRegister = `${serverHost}/user/register`;
+export const urlUserUpdate = `${serverHost}/user/update_profile`;
 export const urlUserLogin = `${serverHost}/user/login`;
 // URLS for avatars
 export const urlAvatars = `${serverHost}/avatar/all`;
