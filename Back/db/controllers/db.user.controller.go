@@ -6,16 +6,32 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var userCollection = db.GetCollection("users")
-var userCtx = context.Background()
+// var userCollection = db.GetCollection("users")
+// var userCtx = context.Background()
+var (
+	// userCollection *mongo.Collection
+	userCtx context.Context
+)
+
+func init() {
+	// userCollection = db.GetCollection("users")
+	userCtx = context.TODO()
+}
+
+func GetCollectionUsers() *mongo.Collection {
+	return db.GetCollection("users")
+}
 
 // Unique field
 // userCollections.createIndex({name:1},{unique: true})
 
 func CreateUser(user models.User) error {
+
+	var userCollection = GetCollectionUsers()
 
 	_, err := userCollection.InsertOne(userCtx, user)
 
@@ -30,6 +46,7 @@ func CreateUser(user models.User) error {
 func ReadUser(filter primitive.M) (models.User, error) {
 
 	var userOut models.User
+	var userCollection = GetCollectionUsers()
 
 	err := userCollection.FindOne(userCtx, filter).Decode(&userOut)
 
@@ -42,6 +59,7 @@ func ReadUser(filter primitive.M) (models.User, error) {
 }
 
 func UpdateUser(filter primitive.M, update primitive.M) error {
+	var userCollection = GetCollectionUsers()
 
 	_, err := userCollection.UpdateOne(userCtx, filter, update)
 
@@ -56,6 +74,7 @@ func UpdateUser(filter primitive.M, update primitive.M) error {
 func FindUserAndUpdate(filter primitive.M, update primitive.M) (models.User, error) {
 
 	var user models.User
+	var userCollection = GetCollectionUsers()
 
 	err := userCollection.FindOneAndUpdate(userCtx, filter, update).Decode(&user)
 
@@ -68,6 +87,7 @@ func FindUserAndUpdate(filter primitive.M, update primitive.M) (models.User, err
 }
 
 func DeleteUser(filter primitive.M) error {
+	var userCollection = GetCollectionUsers()
 
 	_, err := userCollection.DeleteOne(userCtx, filter)
 
@@ -82,6 +102,7 @@ func ReadUsers(filter primitive.M, options *options.FindOptions) ([]models.UserN
 
 	var names []models.UserName
 	var name models.UserName
+	var userCollection = GetCollectionUsers()
 
 	namesUser, err := userCollection.Find(userCtx, filter, options)
 

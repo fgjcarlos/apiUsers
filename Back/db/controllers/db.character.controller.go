@@ -8,13 +8,30 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var collectionCharacters = db.GetCollection("characters")
-var ctxCharacter = context.Background()
+// var collectionCharacters = db.GetCollection("characters")
+// var ctxCharacter = context.Background()
+
+var (
+	// collectionCharacters *mongo.Collection
+	ctxCharacter context.Context
+)
+
+func init() {
+	// collectionCharacters = db.GetCollection("characters")
+	ctxCharacter = context.TODO()
+}
+
+func GetCollectionCharacters() *mongo.Collection {
+	return db.GetCollection("characters")
+}
 
 func Create(Character models.Character) error {
+
+	var collectionCharacters = GetCollectionCharacters()
 
 	_, err := collectionCharacters.InsertOne(ctxCharacter, Character)
 
@@ -28,6 +45,7 @@ func Create(Character models.Character) error {
 func ReadCharacter(filter primitive.M) (models.Character, error) {
 
 	var Character u.Character
+	var collectionCharacters = GetCollectionCharacters()
 
 	err := collectionCharacters.FindOne(ctxCharacter, filter).Decode(&Character)
 
@@ -37,6 +55,7 @@ func ReadCharacter(filter primitive.M) (models.Character, error) {
 func ReadCharacters(filter primitive.M) (models.Characters, error) {
 
 	var Characters u.Characters
+	var collectionCharacters = GetCollectionCharacters()
 
 	cur, err := collectionCharacters.Find(ctxCharacter, filter)
 
@@ -65,6 +84,7 @@ func ReadCharacters(filter primitive.M) (models.Characters, error) {
 
 func UpdateCharacter(filter primitive.M, update primitive.M) error {
 	var err error
+	var collectionCharacters = GetCollectionCharacters()
 
 	_, err = collectionCharacters.UpdateOne(ctxCharacter, filter, update)
 
@@ -76,6 +96,7 @@ func UpdateCharacter(filter primitive.M, update primitive.M) error {
 }
 
 func DeleteCharacter(filter primitive.M) error {
+	var collectionCharacters = GetCollectionCharacters()
 
 	_, err := collectionCharacters.DeleteOne(ctxCharacter, filter)
 
@@ -91,6 +112,7 @@ func GenerateID() (int, error) {
 
 	// var Characters models.Characters
 	var Characters models.Characters
+	var collectionCharacters = GetCollectionCharacters()
 
 	filter := bson.D{}
 

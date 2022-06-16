@@ -7,14 +7,27 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var collectionAvatars = db.GetCollection("avatars")
-var ctxAvatars = context.Background()
+var (
+	// collectionAvatars *mongo.Collection
+	ctxAvatars context.Context
+)
+
+func init() {
+	// collectionAvatars = db.GetCollection("avatars")
+	ctxAvatars = context.TODO()
+}
+
+func GetCollectionAvatars() *mongo.Collection {
+	return db.GetCollection("avatars")
+}
 
 func CreateAvatar(avatar a.Avatar) error {
 
 	var err error
+	var collectionAvatars = GetCollectionAvatars()
 
 	_, err = collectionAvatars.InsertOne(ctxAvatars, avatar)
 
@@ -28,6 +41,7 @@ func CreateAvatar(avatar a.Avatar) error {
 func ReadAvatar(filter primitive.M) (a.Avatar, error) {
 
 	var avatar a.Avatar
+	var collectionAvatars = GetCollectionAvatars()
 
 	err := collectionAvatars.FindOne(ctxAvatars, filter).Decode(&avatar)
 
@@ -42,6 +56,7 @@ func ReadAvatar(filter primitive.M) (a.Avatar, error) {
 func ReadAvatars(filter primitive.M) (a.Avatars, error) {
 
 	var avatars a.Avatars
+	var collectionAvatars = GetCollectionAvatars()
 
 	cur, err := collectionAvatars.Find(ctxAvatars, filter)
 
@@ -68,6 +83,7 @@ func ReadAvatars(filter primitive.M) (a.Avatars, error) {
 func UpdateAvatar(filter primitive.M, update primitive.M) error {
 
 	var err error
+	var collectionAvatars = GetCollectionAvatars()
 
 	_, err = collectionAvatars.UpdateOne(ctxAvatars, filter, update)
 
@@ -81,6 +97,7 @@ func UpdateAvatar(filter primitive.M, update primitive.M) error {
 func DeleteAvatar(filter primitive.M) error {
 
 	var err error
+	var collectionAvatars = GetCollectionAvatars()
 
 	_, err = collectionAvatars.DeleteOne(ctxAvatars, filter)
 
@@ -93,6 +110,8 @@ func DeleteAvatar(filter primitive.M) error {
 
 // Get amount of Characters and sum 1 for ID
 func GenerateAavatarsID() (int, error) {
+
+	var collectionAvatars = GetCollectionAvatars()
 
 	filter := bson.M{}
 

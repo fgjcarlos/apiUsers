@@ -1,12 +1,10 @@
 package main
 
 import (
-	"apiBack/controllers/c_delete"
-	"apiBack/controllers/c_get"
-	"apiBack/controllers/c_post"
-	"apiBack/controllers/c_update"
+	"apiBack/db"
 	"apiBack/db/models"
 	mw "apiBack/middelwares"
+	"apiBack/routes"
 
 	"fmt"
 	"log"
@@ -18,7 +16,15 @@ import (
 	"github.com/unrolled/secure"
 )
 
+func init() {
+	db.Init()
+}
+
 func main() {
+
+	// db.Init()
+	// Ping mongoDB with Ping method
+	db.Ping()
 
 	// Load var env
 	// pathEnvFile := "/home/fgjcarlos/MEGAsync/DesarrolloWeb/CURSOS/apiUsers/Back/.env"
@@ -53,56 +59,8 @@ func main() {
 		log.Fatal("authMiddleware.MiddlewareInit() Error:" + errInit.Error())
 	}
 
-	r.MaxMultipartMemory = 8 << 20 // 8 MiB
-
-	// Static files
-	r.Static("/static", "./media/")
-	r.StaticFile("/favicon.ico", "./resources/favicon.ico")
-
-	// *Group of uploads, endpoint "UPLOAD"
-	// TODO --> Add a middelware type acces key
-	r.POST("/upload", mwAuth.MiddlewareFunc(), c_post.UploadFile)
-
-	// *Endpoint "profilePhoto"
-	profilePhotoGroup := r.Group("/profilePhoto")
-	{
-		profilePhotoGroup.GET("/all", c_get.GetAllProfilePhotos)
-		profilePhotoGroup.GET("/:id", c_get.GetProfilePhotosById)
-	}
-
-	// *Endpoint "AVATAR"
-	avatarGroup := r.Group("/avatar")
-	{
-		avatarGroup.GET("/all", c_get.GetAllAvatars)
-		avatarGroup.GET("/:id", c_get.GetAvatarById)
-		avatarGroup.POST("/add", c_post.AddAvatar)
-	}
-
-	// *Endpoint "CHARACTER"
-	charactersGroup := r.Group("/character")
-	{
-		charactersGroup.GET("/all", c_get.GetAllCharacters)
-		charactersGroup.GET("/:id", c_get.GetCharacterById)
-		// TODO -> Add mw for max. quantity of characters <= 3
-		charactersGroup.POST("/add", mwAuth.MiddlewareFunc(), c_post.AddCharacter)
-		charactersGroup.PATCH("/modify", mwAuth.MiddlewareFunc(), c_update.CharacterUpdate)
-
-	}
-
-	// *Endopint "USER"
-	usersGroup := r.Group("/user")
-	{
-		usersGroup.GET("/characters/:id", mwAuth.MiddlewareFunc(), c_get.GetCharactersByUser)
-		usersGroup.GET("/info", mwAuth.MiddlewareFunc(), c_get.GetUserInfo)
-		usersGroup.GET("/all", c_get.GetNamesUsers)
-		usersGroup.GET("/refresh_token", mwAuth.RefreshHandler)
-		usersGroup.POST("/register", c_post.RegisterUser)
-		usersGroup.POST("/login", mwAuth.LoginHandler)
-		usersGroup.PATCH("/update_profile", mwAuth.MiddlewareFunc(), c_update.UpdateUserProfile)
-		usersGroup.DELETE("/character/:id", mwAuth.MiddlewareFunc(), c_delete.DeleteCharacter)
-	}
-
-	r.GET("/", homePage)
+	routes.InitRoutes(r, mwAuth)
+	// r.GET("/", homePage)
 
 	// Start server
 	r.Run(fmt.Sprintf("%s:%s", HOST, PORT))

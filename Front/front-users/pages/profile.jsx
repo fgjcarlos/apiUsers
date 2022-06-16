@@ -30,12 +30,8 @@ export default function Profile() {
     const memberSince = dayjs(userLogin?.created_at).format('MMMM DD, YYYY')
     dayjs.extend(customParseFormat)
 
-    // TODO--> debug print
-    // console.log("maxCharacter", maxCharacter);
 
     if (!loaded || !userLogin) return <Spinner />
-
-    // console.log(userLogin);
 
     return (
         <div className='lg:w-[80%] box-content mx-auto p-4'>
